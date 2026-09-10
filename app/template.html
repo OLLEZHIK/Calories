@@ -168,6 +168,11 @@ a{color:inherit}
 .srcs{padding:14px 18px 16px; font-size:12px; color:var(--ink-2); display:flex; flex-direction:column; gap:5px}
 .srcs a{color:var(--ink-2); text-underline-offset:2px}
 .srcs a:hover{color:var(--ink)}
+@media (min-width:861px){
+  /* последняя карточка растягивается, чтобы в сетке не оставалось пустых ячеек */
+  .method .mcell:last-child:nth-child(3n+2){grid-column:span 2}
+  .method .mcell:last-child:nth-child(3n+1){grid-column:span 3}
+}
 
 /* ---------- catalog ---------- */
 .searchrow{display:flex; gap:10px; align-items:center; padding:14px 18px; flex-wrap:wrap}
@@ -752,6 +757,8 @@ footer p{margin:0 0 7px}
       { e:"Шаг 3 · Этап «" + PH().label + "»", v:nf(T.kcal), u:"ккал",
         f:PH().deficitPct ? "TDEE − " + PH().deficitPct + "% → округлено" : "Без дефицита → округлено",
         n:PH().deficitNote || M.deficit.note },
+      { e:"Темп", v:M.rate ? M.rate.value : "—", u:"г жира в неделю",
+        f:M.rate ? M.rate.formula : "", n:M.rate ? M.rate.note : "" },
       { e:"Белки", v:T.protein, u:"г", f:M.protein.formula, n:M.protein.note },
       { e:"Жиры", v:T.fat, u:"г", f:M.fat.formula, n:M.fat.note },
       { e:"Углеводы", v:T.carbs, u:"г", f:M.carbs.formula, n:M.carbs.note },
@@ -768,8 +775,9 @@ footer p{margin:0 0 7px}
         return '<a href="' + s.url + '" target="_blank" rel="noopener">' + s.title + ' ↗</a>';
       }).join("");
     document.getElementById("method-sub").textContent =
-      P.sex === "male" ? "Мужчина, " + P.age + " лет, " + P.heightCm + " см, " + P.weightKg + " кг, " + P.activity.label.toLowerCase()
-                       : P.age + " лет, " + P.heightCm + " см, " + P.weightKg + " кг";
+      (P.sex === "male" ? "Мужчина, " : "") + P.age + " лет, " + P.heightCm + " см, " + P.weightKg + " кг" +
+      (P.bodyFatPct ? ", жир ~" + P.bodyFatPct + "% (сухая масса " + P.lbmKg + " кг)" : "") +
+      ", " + P.activity.label.toLowerCase();
   }
 
   // --- каталог ---
@@ -805,7 +813,9 @@ footer p{margin:0 0 7px}
     document.getElementById("hdr-sub").innerHTML =
       "Норма <b>" + nf(T.kcal) + " ккал</b> в день: белки " + T.protein + " г, жиры " + T.fat +
       " г, углеводы " + T.carbs + " г. Расчёт по формуле Миффлина — Сан Жеора" +
-      (ph.deficitPct ? " с дефицитом " + ph.deficitPct + "%." : " — расход без дефицита.");
+      (ph.deficitPct ? " с дефицитом " + ph.deficitPct + "%." : " — расход без дефицита.") +
+      (ph.deficitPct && P.targetFatLossGPerWeek
+        ? " Темп: <b>" + P.targetFatLossGPerWeek + " г жира в неделю</b>." : "");
   }
 
   // --- общий рендер ---
@@ -888,9 +898,10 @@ footer p{margin:0 0 7px}
   if(P.toConfirm && P.toConfirm.length){
     var b = document.createElement("div");
     b.className = "banner";
-    b.innerHTML = '<span aria-hidden="true">⚑</span><div><b>Вес ' + P.weightKg + ' кг и цель ' + P.goalWeightKg +
-      ' кг — твои.</b> Рост ' + P.heightCm + ' см, возраст ' + P.age + ' и уровень активности «' +
-      P.activity.label.toLowerCase() + '» пока прежние — подтверди или поправь, и нормы пересчитаются.</div>';
+    b.innerHTML = '<span aria-hidden="true">⚑</span><div><b>Рост ' + P.heightCm + ' см, вес ' + P.weightKg +
+      ' кг, цель ' + P.goalWeightKg + ' кг и темп ' + P.targetFatLossGPerWeek + ' г в неделю — с твоих слов.</b> ' +
+      'Возраст ' + P.age + ' и уровень активности «' + P.activity.label.toLowerCase() +
+      '» пока предположение — скажи точные, и нормы пересчитаются.</div>';
     document.querySelector(".masthead").insertAdjacentElement("afterend", b);
   }
 })();
