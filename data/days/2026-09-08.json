@@ -1,0 +1,10 @@
+{ "date": "2026-09-08", "example": true, "weightKg": 89.9, "note": "Пример: почти идеально — калории и БЖУ сошлись.",
+  "meals": [
+    { "name": "Завтрак", "time": "08:40", "items": [
+      { "id": "oats", "g": 80 }, { "id": "milk25", "g": 250 }, { "id": "egg", "pieces": 2 } ] },
+    { "name": "Обед", "time": "13:45", "items": [
+      { "id": "chicken_breast", "g": 250 }, { "id": "rice_dry", "g": 90 }, { "id": "cucumber", "pieces": 1 },
+      { "id": "oil_sunflower", "pieces": 1 } ] },
+    { "name": "Ужин", "time": "19:20", "items": [
+      { "id": "salmon", "g": 180 }, { "id": "tomato", "pieces": 1 }, { "id": "bread_rye", "pieces": 2 } ] },
+    { "name": "Перекус", "time": "16:30", "items": [ { "id": "yogurt32", "g": 150 }, { "id": "apple", "pieces": 1 } ] } ] }

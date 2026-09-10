@@ -1,0 +1,676 @@
+<title>Дневник калорий</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#faf9f6; --panel:#ffffff; --panel-2:#f2f0ea;
+  --ink:#14140f; --ink-2:#57564e; --ink-3:#8a887c;
+  --hair:#dcdad0; --rule:#14140f;
+  --p:#2a78d6; --f:#eb6834; --c:#1baf7a;
+  --good:#0f7a43; --warn:#a86a00; --crit:#c8322f;
+  --good-bg:#e7f3ec; --warn-bg:#f8efdb; --crit-bg:#fbe9e8;
+  --track:#e6e4db;
+  --shadow:0 1px 0 rgba(20,20,15,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111110; --panel:#1a1a17; --panel-2:#232320;
+    --ink:#f5f4ee; --ink-2:#b3b1a5; --ink-3:#7d7b70;
+    --hair:#33322c; --rule:#5c5a51;
+    --p:#3987e5; --f:#d95926; --c:#199e70;
+    --good:#3fae6b; --warn:#d9a441; --crit:#e66767;
+    --good-bg:#172a1f; --warn-bg:#2c2517; --crit-bg:#2e1a1a;
+    --track:#2c2b26;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111110; --panel:#1a1a17; --panel-2:#232320;
+  --ink:#f5f4ee; --ink-2:#b3b1a5; --ink-3:#7d7b70;
+  --hair:#33322c; --rule:#5c5a51;
+  --p:#3987e5; --f:#d95926; --c:#199e70;
+  --good:#3fae6b; --warn:#d9a441; --crit:#e66767;
+  --good-bg:#172a1f; --warn-bg:#2c2517; --crit-bg:#2e1a1a;
+  --track:#2c2b26;
+  --shadow:none;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px; margin:0 auto; padding-inline:20px; padding-block:28px 64px}
+h1,h2,h3{margin:0; font-family:Oswald,"Golos Text",system-ui,sans-serif; font-weight:600; text-wrap:balance}
+.num{font-family:Oswald,"Golos Text",sans-serif; font-variant-numeric:tabular-nums; font-weight:500}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+.eyebrow{
+  font-family:"JetBrains Mono",ui-monospace,monospace; font-size:10.5px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3);
+}
+a{color:inherit}
+
+/* ---------- masthead ---------- */
+.masthead{display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:12px 24px; padding-bottom:10px}
+.masthead h1{font-size:clamp(26px,4.4vw,38px); letter-spacing:-.01em; text-transform:uppercase}
+.masthead .sub{color:var(--ink-2); font-size:13.5px; max-width:46ch}
+.rule-heavy{height:7px; background:var(--rule); border:0; margin:0}
+.rule-mid{height:3px; background:var(--rule); border:0; margin:0}
+.rule-hair{height:1px; background:var(--hair); border:0; margin:0}
+
+/* ---------- day strip ---------- */
+.daystrip{display:flex; gap:6px; overflow-x:auto; padding:14px 0 16px; scrollbar-width:thin}
+.chip{
+  flex:0 0 auto; min-width:62px; padding:7px 9px 8px; border:1px solid var(--hair);
+  background:var(--panel); color:var(--ink-2); cursor:pointer; text-align:left;
+  font-family:"Golos Text",sans-serif; font-size:12px; line-height:1.25; border-radius:2px;
+  transition:border-color .12s ease, background .12s ease;
+}
+.chip:hover{border-color:var(--ink-3)}
+.chip .cd{display:block; font-weight:600; color:var(--ink)}
+.chip .ck{display:block; font-family:"JetBrains Mono",monospace; font-size:10.5px; color:var(--ink-3); margin-top:2px}
+.chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink)}
+.chip[aria-pressed="true"] .cd,.chip[aria-pressed="true"] .ck{color:var(--paper)}
+.chip .dot{display:inline-block; width:5px; height:5px; border-radius:50%; margin-left:4px; vertical-align:1px}
+
+/* ---------- panels ---------- */
+.grid-top{display:grid; grid-template-columns:minmax(0,1.02fr) minmax(0,1fr); gap:20px; align-items:start; margin-top:4px}
+.panel{background:var(--panel); border:1px solid var(--hair); border-radius:3px; box-shadow:var(--shadow)}
+.panel-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:13px 18px 11px}
+.panel-head h2{font-size:15px; text-transform:uppercase; letter-spacing:.04em}
+.panel-body{padding:18px}
+
+/* ---------- calorie dial ---------- */
+.dial-wrap{display:flex; align-items:center; gap:22px; flex-wrap:wrap}
+.dial{position:relative; flex:0 0 auto; width:212px; height:212px}
+.dial svg{display:block}
+.dial-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:1px}
+.dial-center .big{font-size:46px; line-height:1; letter-spacing:-.02em}
+.dial-center .of{font-size:12.5px; color:var(--ink-2)}
+.dial-meta{flex:1 1 190px; min-width:170px; display:flex; flex-direction:column; gap:12px}
+.pill{
+  display:inline-flex; align-items:center; gap:7px; align-self:flex-start;
+  padding:5px 11px 5px 9px; border-radius:999px; font-size:12.5px; font-weight:600; border:1px solid transparent;
+}
+.pill .sq{width:9px; height:9px; border-radius:2px; flex:0 0 auto}
+.pill.good{background:var(--good-bg); color:var(--good); border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+.pill.warn{background:var(--warn-bg); color:var(--warn); border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+.pill.crit{background:var(--crit-bg); color:var(--crit); border-color:color-mix(in srgb,var(--crit) 30%,transparent)}
+.kv{display:grid; grid-template-columns:1fr auto; gap:5px 12px; font-size:13px}
+.kv dt{color:var(--ink-2)}
+.kv dd{margin:0; font-family:Oswald,sans-serif; font-variant-numeric:tabular-nums; font-weight:500}
+
+/* ---------- macro rings ---------- */
+.macros{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
+.macro{display:flex; flex-direction:column; align-items:center; gap:8px; padding:6px 2px 4px; text-align:center}
+.macro .ring{position:relative; width:112px; height:112px}
+.macro .rc{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.05}
+.macro .rc .v{font-family:Oswald,sans-serif; font-variant-numeric:tabular-nums; font-weight:600; font-size:21px}
+.macro .rc .t{font-family:"JetBrains Mono",monospace; font-size:10px; color:var(--ink-3); margin-top:2px}
+.macro .nm{font-size:12.5px; font-weight:600}
+.macro .left{font-size:11.5px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+.macro .left.over{color:var(--crit); font-weight:600}
+
+/* ---------- nutrition panel (meals) ---------- */
+.facts{margin-top:22px}
+.facts .fhead{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; padding:0 0 6px}
+.facts h2{font-size:22px; text-transform:uppercase; letter-spacing:.01em}
+.mealtable{width:100%; border-collapse:collapse; font-size:14px}
+.mealtable th,.mealtable td{padding:7px 8px; text-align:right; vertical-align:baseline}
+.mealtable th:first-child,.mealtable td:first-child{text-align:left; padding-left:0}
+.mealtable td:last-child,.mealtable th:last-child{padding-right:0}
+.mealtable thead th{
+  font-family:"JetBrains Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); border-bottom:1px solid var(--hair); padding-bottom:5px;
+}
+.mealtable tr.meal-h td{
+  padding-top:15px; border-top:3px solid var(--rule);
+  font-family:Oswald,sans-serif; font-size:15px; font-weight:600; text-transform:uppercase; letter-spacing:.03em;
+}
+.mealtable tr.meal-h td .time{font-family:"JetBrains Mono",monospace; font-size:11px; font-weight:400; color:var(--ink-3); letter-spacing:0; text-transform:none; margin-left:8px}
+.mealtable tr.item td{border-top:1px solid var(--hair)}
+.mealtable tr.item td:first-child{font-weight:500}
+.mealtable tr.item .g{font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--ink-2)}
+.mealtable tr.item .n{font-variant-numeric:tabular-nums}
+.mealtable tr.sub td{border-top:1px solid var(--hair); font-size:12.5px; color:var(--ink-2); padding-top:6px}
+.mealtable tr.sub td.lbl{font-family:"JetBrains Mono",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase}
+.mealtable tr.sub td{font-variant-numeric:tabular-nums}
+.mealtable tfoot td{
+  border-top:7px solid var(--rule); padding-top:11px;
+  font-family:Oswald,sans-serif; font-weight:600; font-size:17px; font-variant-numeric:tabular-nums;
+}
+.mealtable tfoot td:first-child{text-transform:uppercase; letter-spacing:.03em}
+.tbl-scroll{overflow-x:auto}
+.itemnote{display:block; font-size:11.5px; color:var(--ink-3); font-weight:400}
+
+/* ---------- week chart ---------- */
+.sect{margin-top:44px}
+.sect-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; padding-bottom:8px}
+.sect-head h2{font-size:20px; text-transform:uppercase}
+.sect-head .note{font-size:12.5px; color:var(--ink-2)}
+.chartbox{position:relative; padding:18px 18px 10px}
+.chartbox svg{display:block; width:100%; height:auto; overflow:visible}
+.legend{display:flex; flex-wrap:wrap; gap:14px; padding:6px 18px 16px; font-size:12px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.legend i{width:11px; height:11px; border-radius:2px; display:inline-block}
+.tip{
+  position:absolute; pointer-events:none; opacity:0; transform:translate(-50%,-100%);
+  background:var(--ink); color:var(--paper); padding:8px 10px; border-radius:3px; font-size:12px;
+  line-height:1.4; white-space:nowrap; transition:opacity .1s ease; z-index:5; box-shadow:0 4px 14px rgba(0,0,0,.2);
+}
+.tip b{font-family:Oswald,sans-serif; font-weight:600; font-size:13px}
+.tip .tm{font-family:"JetBrains Mono",monospace; font-size:11px; opacity:.75}
+
+/* ---------- diary table ---------- */
+.diary{width:100%; border-collapse:collapse; font-size:13.5px}
+.diary th{
+  font-family:"JetBrains Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); text-align:right; padding:0 10px 7px; border-bottom:3px solid var(--rule);
+}
+.diary th:first-child{text-align:left; padding-left:14px}
+.diary td{padding:9px 10px; text-align:right; border-bottom:1px solid var(--hair); font-variant-numeric:tabular-nums}
+.diary td:first-child{text-align:left; padding-left:14px; font-weight:600}
+.diary tr{cursor:pointer}
+.diary tbody tr:hover{background:var(--panel-2)}
+.diary tr[aria-current="true"]{background:var(--panel-2)}
+.diary tr[aria-current="true"] td:first-child{box-shadow:inset 4px 0 0 var(--ink)}
+.delta.over{color:var(--crit); font-weight:600}
+.delta.under{color:var(--ink-2)}
+.dow{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--ink-3); margin-left:7px; font-weight:400}
+
+/* ---------- targets / method ---------- */
+.method{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--hair)}
+.mcell{background:var(--panel); padding:16px 18px 18px}
+.mcell .eyebrow{display:block; margin-bottom:7px}
+.mcell .val{font-family:Oswald,sans-serif; font-weight:600; font-size:28px; line-height:1; font-variant-numeric:tabular-nums}
+.mcell .val small{font-size:14px; font-weight:400; color:var(--ink-2); margin-left:3px}
+.mcell .fm{font-family:"JetBrains Mono",monospace; font-size:11.5px; color:var(--ink-2); margin-top:8px; line-height:1.5}
+.mcell p{margin:8px 0 0; font-size:12.5px; color:var(--ink-2); line-height:1.5}
+.srcs{padding:14px 18px 16px; font-size:12px; color:var(--ink-2); display:flex; flex-direction:column; gap:5px}
+.srcs a{color:var(--ink-2); text-underline-offset:2px}
+.srcs a:hover{color:var(--ink)}
+
+/* ---------- catalog ---------- */
+.searchrow{display:flex; gap:10px; align-items:center; padding:14px 18px; flex-wrap:wrap}
+input[type="search"]{
+  flex:1 1 220px; min-width:0; font:inherit; font-size:14px; padding:8px 11px;
+  border:1px solid var(--hair); border-radius:2px; background:var(--paper); color:var(--ink);
+}
+input[type="search"]:focus-visible{outline:2px solid var(--ink); outline-offset:1px; border-color:var(--ink)}
+.count{font-family:"JetBrains Mono",monospace; font-size:11.5px; color:var(--ink-3)}
+.cat{width:100%; border-collapse:collapse; font-size:13.5px}
+.cat th{
+  font-family:"JetBrains Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); text-align:right; padding:0 10px 7px; border-bottom:3px solid var(--rule);
+}
+.cat th:first-child{text-align:left; padding-left:18px}
+.cat th:last-child,.cat td:last-child{padding-right:18px}
+.cat td{padding:8px 10px; text-align:right; border-bottom:1px solid var(--hair); font-variant-numeric:tabular-nums}
+.cat td:first-child{text-align:left; padding-left:18px; font-weight:500}
+.cat .tag{font-family:"JetBrains Mono",monospace; font-size:10.5px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.06em}
+.cat .pc{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--ink-3)}
+
+/* ---------- notes / footer ---------- */
+.banner{
+  display:flex; gap:11px; align-items:flex-start; margin-top:16px; padding:12px 15px;
+  border:1px solid var(--hair); border-left:4px solid var(--warn); border-radius:2px;
+  background:var(--panel); font-size:13px; color:var(--ink-2);
+}
+.banner b{color:var(--ink)}
+footer{margin-top:48px; padding-top:18px; border-top:3px solid var(--rule); font-size:12.5px; color:var(--ink-2)}
+footer code{font-family:"JetBrains Mono",monospace; font-size:11.5px; background:var(--panel-2); padding:1px 5px; border-radius:2px}
+footer p{margin:0 0 7px}
+
+:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+@media (max-width:860px){
+  .grid-top{grid-template-columns:1fr}
+  .method{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dial{width:190px; height:190px}
+}
+@media (max-width:430px){
+  .wrap{padding-block:20px 44px}
+  .method{grid-template-columns:1fr}
+  .macros{gap:2px}
+  .macro .ring{width:92px; height:92px}
+  .macro .rc .v{font-size:18px}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <span class="eyebrow" id="hdr-eyebrow">Личный дневник питания</span>
+      <h1>Дневник калорий</h1>
+    </div>
+    <p class="sub" id="hdr-sub"></p>
+  </header>
+  <hr class="rule-heavy">
+
+  <nav class="daystrip" id="daystrip" aria-label="Выбор дня"></nav>
+
+  <div class="grid-top">
+    <section class="panel" aria-labelledby="h-day">
+      <div class="panel-head">
+        <h2 id="h-day">Итог дня</h2>
+        <span class="eyebrow" id="day-label"></span>
+      </div>
+      <hr class="rule-mid">
+      <div class="panel-body">
+        <div class="dial-wrap">
+          <div class="dial" id="dial"></div>
+          <div class="dial-meta">
+            <span class="pill" id="status-pill"><i class="sq"></i><span></span></span>
+            <dl class="kv" id="day-kv"></dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="h-macros">
+      <div class="panel-head">
+        <h2 id="h-macros">Белки · Жиры · Углеводы</h2>
+        <span class="eyebrow">Съедено из нормы</span>
+      </div>
+      <hr class="rule-mid">
+      <div class="panel-body">
+        <div class="macros" id="macros"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="day-note-slot"></div>
+
+  <section class="facts" aria-labelledby="h-meals">
+    <div class="fhead">
+      <h2 id="h-meals">Приёмы пищи</h2>
+      <span class="eyebrow" id="meals-date"></span>
+    </div>
+    <hr class="rule-heavy">
+    <div class="tbl-scroll">
+      <table class="mealtable" id="mealtable"></table>
+    </div>
+  </section>
+
+  <section class="sect" aria-labelledby="h-week">
+    <div class="sect-head">
+      <h2 id="h-week">Калории по дням</h2>
+      <span class="note">Тёмная часть столбца — до нормы, красная — перебор. Норма <span class="mono" id="week-target"></span> ккал.</span>
+    </div>
+    <div class="panel">
+      <div class="chartbox">
+        <svg id="weekchart" viewBox="0 0 720 240" role="img" aria-labelledby="wc-title"><title id="wc-title">Калории по дням в сравнении с дневной нормой</title></svg>
+        <div class="tip" id="tip"></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--ink)"></i>В пределах нормы</span>
+        <span><i style="background:var(--crit)"></i>Перебор</span>
+        <span><i style="background:var(--ink-3)"></i>Недобор больше 15%</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect" aria-labelledby="h-diary">
+    <div class="sect-head">
+      <h2 id="h-diary">Дневник</h2>
+      <span class="note">Нажми на строку, чтобы открыть день.</span>
+    </div>
+    <div class="panel">
+      <div class="tbl-scroll">
+        <table class="diary" id="diary">
+          <thead><tr>
+            <th scope="col">День</th><th scope="col">Ккал</th><th scope="col">Δ к норме</th>
+            <th scope="col">Белки</th><th scope="col">Жиры</th><th scope="col">Углеводы</th><th scope="col">Вес</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="sect" aria-labelledby="h-method">
+    <div class="sect-head">
+      <h2 id="h-method">Откуда взялись нормы</h2>
+      <span class="note" id="method-sub"></span>
+    </div>
+    <div class="panel">
+      <div class="method" id="method"></div>
+      <hr class="rule-hair">
+      <div class="srcs" id="srcs"></div>
+    </div>
+  </section>
+
+  <section class="sect" aria-labelledby="h-cat">
+    <div class="sect-head">
+      <h2 id="h-cat">База продуктов</h2>
+      <span class="note">Значения на 100 г. Файл <span class="mono">data/foods.json</span> в репозитории.</span>
+    </div>
+    <div class="panel">
+      <div class="searchrow">
+        <input type="search" id="catsearch" placeholder="Найти продукт…" aria-label="Поиск по базе продуктов">
+        <span class="count" id="catcount"></span>
+      </div>
+      <hr class="rule-hair">
+      <div class="tbl-scroll">
+        <table class="cat" id="cattable">
+          <thead><tr>
+            <th scope="col">Продукт</th><th scope="col">Ккал</th><th scope="col">Белки</th>
+            <th scope="col">Жиры</th><th scope="col">Углеводы</th><th scope="col">Штука</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Как добавить день:</b> напиши мне «посчитай завтрак: 4 яйца, 50 г сыра, чай с 20 г сахара» — я найду продукты в базе, добавлю недостающие и запишу день в <code>data/days/ГГГГ-ММ-ДД.json</code>, а потом обновлю эту страницу.</p>
+    <p>Данные живут в репозитории: <code>data/foods.json</code> — база продуктов, <code>data/profile.json</code> — твои параметры и нормы, <code>data/days/</code> — дневник.</p>
+  </footer>
+</div>
+
+<script id="app-data" type="application/json">__DATA__</script>
+<script>
+(function(){
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("app-data").textContent);
+  var P = DATA.profile, T = P.targets;
+  var FOODS = {}; DATA.foods.forEach(function(f){ FOODS[f.id] = f; });
+  var DAYS = DATA.days.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+
+  var MONTHS = ["янв","фев","мар","апр","мая","июн","июл","авг","сен","окт","ноя","дек"];
+  var DOW = ["вс","пн","вт","ср","чт","пт","сб"];
+  function d(s){ var p = s.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+  function fmtShort(s){ var x = d(s); return x.getDate() + " " + MONTHS[x.getMonth()]; }
+  function fmtLong(s){ var x = d(s); return x.getDate() + " " + MONTHS[x.getMonth()] + " " + x.getFullYear(); }
+  function dow(s){ return DOW[d(s).getDay()]; }
+  function r0(n){ return Math.round(n); }
+  function r1(n){ return Math.round(n*10)/10; }
+  function nf(n){ return r0(n).toLocaleString("ru-RU"); }
+
+  // --- расчёт ---
+  function resolve(item){
+    var f = FOODS[item.id];
+    if(!f) return { name: item.id + " — нет в базе", g: 0, k:0, p:0, f:0, c:0, missing:true, note:item.note };
+    var g = item.pieces != null && f.piece ? item.pieces * f.piece.g : (item.g || 0);
+    var m = g / 100;
+    return {
+      name: f.name, g: g, note: item.note,
+      qty: item.pieces != null && f.piece ? item.pieces + " " + f.piece.label : null,
+      k: f.per100.k*m, p: f.per100.p*m, f: f.per100.f*m, c: f.per100.c*m
+    };
+  }
+  function sum(rows){
+    return rows.reduce(function(a,x){ a.k+=x.k; a.p+=x.p; a.f+=x.f; a.c+=x.c; return a; }, {k:0,p:0,f:0,c:0});
+  }
+  function dayTotals(day){
+    var all = [];
+    day.meals.forEach(function(m){ m.items.forEach(function(i){ all.push(resolve(i)); }); });
+    return sum(all);
+  }
+  var TOTALS = {}; DAYS.forEach(function(x){ TOTALS[x.date] = dayTotals(x); });
+
+  function statusOf(k){
+    var over = k - T.kcal;
+    if(over > T.kcal*0.05) return { cls:"crit", label:"Перебор " + nf(over) + " ккал", color:"var(--crit)" };
+    if(over > 0) return { cls:"warn", label:"Чуть выше нормы: +" + nf(over) + " ккал", color:"var(--warn)" };
+    if(k < T.kcal*0.85) return { cls:"warn", label:"Недобор " + nf(-over) + " ккал", color:"var(--warn)" };
+    return { cls:"good", label:"В пределах нормы", color:"var(--good)" };
+  }
+
+  // --- кольца ---
+  function ring(size, stroke, pct, color, inner){
+    var r = (size - stroke)/2, C = 2*Math.PI*r, v = Math.max(0, Math.min(1, pct)) * C;
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true">' +
+      '<circle cx="' + size/2 + '" cy="' + size/2 + '" r="' + r + '" fill="none" stroke="var(--track)" stroke-width="' + stroke + '"></circle>' +
+      '<circle cx="' + size/2 + '" cy="' + size/2 + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="' + stroke +
+      '" stroke-linecap="butt" stroke-dasharray="' + v.toFixed(1) + ' ' + (C-v).toFixed(1) + '" transform="rotate(-90 ' + size/2 + ' ' + size/2 + ')"></circle>' +
+      '</svg>' + (inner || "");
+  }
+
+  // --- рендер дня ---
+  var current = DAYS[DAYS.length-1].date;
+
+  function renderDial(t){
+    var st = statusOf(t.k), pct = t.k / T.kcal, left = T.kcal - t.k;
+    document.getElementById("dial").innerHTML = ring(212, 22, pct, st.color,
+      '<div class="dial-center"><span class="num big">' + nf(t.k) + '</span>' +
+      '<span class="of">из ' + nf(T.kcal) + ' ккал</span></div>');
+    var pill = document.getElementById("status-pill");
+    pill.className = "pill " + st.cls;
+    pill.querySelector(".sq").style.background = st.color;
+    pill.querySelector("span:last-child").textContent = st.label;
+    document.getElementById("day-kv").innerHTML =
+      '<dt>' + (left >= 0 ? "Осталось на сегодня" : "Съедено сверх нормы") + '</dt><dd>' + nf(Math.abs(left)) + ' ккал</dd>' +
+      '<dt>Норма на день</dt><dd>' + nf(T.kcal) + ' ккал</dd>' +
+      '<dt>Выполнено</dt><dd>' + r0(pct*100) + ' %</dd>';
+  }
+
+  function renderMacros(t){
+    var rows = [
+      { key:"p", nm:"Белки",     v:t.p, tg:T.protein, col:"var(--p)" },
+      { key:"f", nm:"Жиры",      v:t.f, tg:T.fat,     col:"var(--f)" },
+      { key:"c", nm:"Углеводы",  v:t.c, tg:T.carbs,   col:"var(--c)" }
+    ];
+    document.getElementById("macros").innerHTML = rows.map(function(m){
+      var pct = m.v/m.tg, over = m.v - m.tg;
+      var inner = '<div class="rc"><span class="v">' + r0(m.v) + '</span><span class="t">из ' + m.tg + ' г</span></div>';
+      var leftTxt = over > 0
+        ? '<span class="left over">+' + r0(over) + ' г сверх</span>'
+        : '<span class="left">осталось ' + r0(-over) + ' г</span>';
+      return '<div class="macro"><div class="ring">' + ring(112, 12, pct, m.col, inner) + '</div>' +
+        '<span class="nm">' + m.nm + '</span>' + leftTxt +
+        '<span class="left mono">' + r0(pct*100) + '%</span></div>';
+    }).join("");
+  }
+
+  function renderMeals(day){
+    var html = '<thead><tr><th scope="col">Продукт</th><th scope="col">Вес</th><th scope="col">Ккал</th>' +
+      '<th scope="col">Б</th><th scope="col">Ж</th><th scope="col">У</th></tr></thead><tbody>';
+    day.meals.forEach(function(meal){
+      var rows = meal.items.map(resolve), s = sum(rows);
+      html += '<tr class="meal-h"><td colspan="6">' + meal.name +
+        (meal.time ? '<span class="time">' + meal.time + '</span>' : '') + '</td></tr>';
+      rows.forEach(function(x){
+        html += '<tr class="item"><td>' + x.name +
+          (x.note ? '<span class="itemnote">' + x.note + '</span>' : '') + '</td>' +
+          '<td class="g">' + (x.qty ? x.qty + ' · ' : '') + r0(x.g) + ' г</td>' +
+          '<td class="n">' + nf(x.k) + '</td><td class="n">' + r1(x.p) + '</td>' +
+          '<td class="n">' + r1(x.f) + '</td><td class="n">' + r1(x.c) + '</td></tr>';
+      });
+      html += '<tr class="sub"><td class="lbl">Итого ' + meal.name.toLowerCase() + '</td><td></td>' +
+        '<td>' + nf(s.k) + '</td><td>' + r0(s.p) + '</td><td>' + r0(s.f) + '</td><td>' + r0(s.c) + '</td></tr>';
+    });
+    var t = TOTALS[day.date];
+    html += '</tbody><tfoot><tr><td>За день</td><td></td><td>' + nf(t.k) + '</td>' +
+      '<td>' + r0(t.p) + '</td><td>' + r0(t.f) + '</td><td>' + r0(t.c) + '</td></tr>' +
+      '<tr class="sub"><td class="lbl">Норма</td><td></td><td>' + nf(T.kcal) + '</td>' +
+      '<td>' + T.protein + '</td><td>' + T.fat + '</td><td>' + T.carbs + '</td></tr></tfoot>';
+    document.getElementById("mealtable").innerHTML = html;
+  }
+
+  function renderNote(day){
+    var slot = document.getElementById("day-note-slot");
+    slot.innerHTML = day.note
+      ? '<div class="banner"><span aria-hidden="true">✎</span><div><b>Заметка к дню.</b> ' + day.note + '</div></div>'
+      : "";
+  }
+
+  function renderStrip(){
+    document.getElementById("daystrip").innerHTML = DAYS.map(function(x){
+      var t = TOTALS[x.date], st = statusOf(t.k);
+      return '<button class="chip" type="button" data-date="' + x.date + '" aria-pressed="' + (x.date===current) + '">' +
+        '<span class="cd">' + fmtShort(x.date) + '<span class="dot" style="background:' + st.color + '"></span></span>' +
+        '<span class="ck">' + nf(t.k) + '</span></button>';
+    }).join("");
+  }
+
+  // --- график недели ---
+  var W = 720, H = 240, PL = 52, PR = 14, PT = 18, PB = 34;
+  function renderChart(){
+    var svg = document.getElementById("weekchart");
+    var max = Math.max(T.kcal * 1.25, Math.max.apply(null, DAYS.map(function(x){ return TOTALS[x.date].k; })) * 1.12);
+    var iw = W - PL - PR, ih = H - PT - PB;
+    var step = iw / DAYS.length, bw = Math.min(46, step * 0.56);
+    var y = function(v){ return PT + ih - (v/max)*ih; };
+    var s = '<title id="wc-title">Калории по дням в сравнении с дневной нормой</title>';
+
+    [0, T.kcal/2, T.kcal, max].forEach(function(v){
+      s += '<line x1="' + PL + '" x2="' + (W-PR) + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) +
+        '" stroke="var(--hair)" stroke-width="1"></line>' +
+        '<text x="' + (PL-10) + '" y="' + (y(v)+4).toFixed(1) + '" text-anchor="end" fill="var(--ink-3)" ' +
+        'font-family="JetBrains Mono, monospace" font-size="10.5">' + nf(v) + '</text>';
+    });
+
+    DAYS.forEach(function(day, i){
+      var t = TOTALS[day.date], cx = PL + step*i + step/2, x = cx - bw/2;
+      var capped = Math.min(t.k, T.kcal), over = Math.max(0, t.k - T.kcal);
+      var base = t.k < T.kcal*0.85 ? "var(--ink-3)" : "var(--ink)";
+      var yb = y(capped), hb = y(0) - yb;
+      if(over > 0){
+        var yo = y(t.k), ho = y(T.kcal) - yo;
+        s += '<rect x="' + x + '" y="' + yo.toFixed(1) + '" width="' + bw + '" height="' + Math.max(0,ho-2).toFixed(1) +
+          '" rx="4" fill="var(--crit)"></rect>';
+        s += '<rect x="' + x + '" y="' + yb.toFixed(1) + '" width="' + bw + '" height="' + hb.toFixed(1) + '" fill="' + base + '"></rect>';
+      } else {
+        s += '<rect x="' + x + '" y="' + yb.toFixed(1) + '" width="' + bw + '" height="' + hb.toFixed(1) +
+          '" rx="4" fill="' + base + '"></rect>' +
+          '<rect x="' + x + '" y="' + (y(0)-6) + '" width="' + bw + '" height="6" fill="' + base + '"></rect>';
+      }
+      s += '<text x="' + cx + '" y="' + (H-PB+17) + '" text-anchor="middle" fill="' + (day.date===current ? "var(--ink)" : "var(--ink-3)") +
+        '" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="' + (day.date===current ? 500 : 400) + '">' +
+        dow(day.date) + " " + d(day.date).getDate() + '</text>';
+      if(day.date === current){
+        s += '<line x1="' + x + '" x2="' + (x+bw) + '" y1="' + (H-PB+24) + '" y2="' + (H-PB+24) + '" stroke="var(--ink)" stroke-width="2"></line>';
+      }
+      s += '<rect class="hit" x="' + (cx-step/2) + '" y="' + PT + '" width="' + step + '" height="' + ih +
+        '" fill="transparent" data-date="' + day.date + '" style="cursor:pointer"></rect>';
+    });
+
+    s += '<line x1="' + PL + '" x2="' + (W-PR) + '" y1="' + y(T.kcal).toFixed(1) + '" y2="' + y(T.kcal).toFixed(1) +
+      '" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"></line>' +
+      '<text x="' + (W-PR) + '" y="' + (y(T.kcal)-8).toFixed(1) + '" text-anchor="end" fill="var(--ink)" ' +
+      'font-family="Oswald, sans-serif" font-size="11" font-weight="500" letter-spacing="0.5" pointer-events="none">НОРМА ' + nf(T.kcal) + '</text>' +
+      '<line x1="' + PL + '" x2="' + (W-PR) + '" y1="' + y(0) + '" y2="' + y(0) + '" stroke="var(--rule)" stroke-width="2"></line>';
+    svg.innerHTML = s;
+  }
+
+  // --- дневник ---
+  function renderDiary(){
+    var tb = document.querySelector("#diary tbody");
+    tb.innerHTML = DAYS.slice().reverse().map(function(x){
+      var t = TOTALS[x.date], dlt = t.k - T.kcal;
+      return '<tr data-date="' + x.date + '" aria-current="' + (x.date===current) + '" tabindex="0">' +
+        '<td>' + fmtLong(x.date) + '<span class="dow">' + dow(x.date) + '</span></td>' +
+        '<td>' + nf(t.k) + '</td>' +
+        '<td class="delta ' + (dlt>0 ? "over" : "under") + '">' + (dlt>0 ? "+" : "−") + nf(Math.abs(dlt)) + '</td>' +
+        '<td>' + r0(t.p) + ' г</td><td>' + r0(t.f) + ' г</td><td>' + r0(t.c) + ' г</td>' +
+        '<td>' + (x.weightKg ? r1(x.weightKg) + " кг" : "—") + '</td></tr>';
+    }).join("");
+  }
+
+  // --- нормы ---
+  function renderMethod(){
+    var M = P.method;
+    var cells = [
+      { e:"Шаг 1 · Базовый обмен", v:nf(M.bmr.value), u:"ккал", f:M.bmr.formula, n:M.bmr.note },
+      { e:"Шаг 2 · Расход за сутки", v:nf(M.tdee.value), u:"ккал", f:M.tdee.formula + " (×" + P.activity.factor + ")", n:P.activity.label },
+      { e:"Шаг 3 · Дефицит", v:nf(T.kcal), u:"ккал", f:M.deficit.formula + " = " + nf(M.deficit.value) + " → округлено", n:M.deficit.note },
+      { e:"Белки", v:T.protein, u:"г", f:M.protein.formula, n:M.protein.note },
+      { e:"Жиры", v:T.fat, u:"г", f:M.fat.formula, n:M.fat.note },
+      { e:"Углеводы", v:T.carbs, u:"г", f:M.carbs.formula, n:M.carbs.note }
+    ];
+    document.getElementById("method").innerHTML = cells.map(function(c){
+      return '<div class="mcell"><span class="eyebrow">' + c.e + '</span>' +
+        '<div class="val">' + c.v + '<small>' + c.u + '</small></div>' +
+        '<div class="fm">' + c.f + '</div><p>' + c.n + '</p></div>';
+    }).join("");
+    document.getElementById("srcs").innerHTML =
+      '<span class="eyebrow">Источники</span>' + M.sources.map(function(s){
+        return '<a href="' + s.url + '" target="_blank" rel="noopener">' + s.title + ' ↗</a>';
+      }).join("");
+    document.getElementById("method-sub").textContent =
+      P.sex === "male" ? "Мужчина, " + P.age + " лет, " + P.heightCm + " см, " + P.weightKg + " кг, " + P.activity.label.toLowerCase()
+                       : P.age + " лет, " + P.heightCm + " см, " + P.weightKg + " кг";
+  }
+
+  // --- каталог ---
+  function renderCatalog(q){
+    var list = DATA.foods.filter(function(f){
+      return !q || f.name.toLowerCase().indexOf(q) >= 0 || f.cat.toLowerCase().indexOf(q) >= 0;
+    });
+    document.querySelector("#cattable tbody").innerHTML = list.map(function(f){
+      return '<tr><td>' + f.name + ' <span class="tag">' + f.cat + '</span></td>' +
+        '<td>' + f.per100.k + '</td><td>' + f.per100.p + '</td><td>' + f.per100.f + '</td><td>' + f.per100.c + '</td>' +
+        '<td class="pc">' + (f.piece ? "1 " + f.piece.label + " = " + f.piece.g + " г" : "—") + '</td></tr>';
+    }).join("") || '<tr><td colspan="6" style="color:var(--ink-3);padding:16px 18px">Ничего не нашлось. Скажи мне — добавлю продукт в базу.</td></tr>';
+    document.getElementById("catcount").textContent = list.length + " из " + DATA.foods.length + " продуктов";
+  }
+
+  // --- общий рендер ---
+  function render(){
+    var day = DAYS.filter(function(x){ return x.date === current; })[0];
+    var t = TOTALS[current];
+    renderDial(t); renderMacros(t); renderMeals(day); renderNote(day);
+    renderStrip(); renderChart(); renderDiary();
+    document.getElementById("day-label").textContent = fmtLong(current) + " · " + dow(current);
+    document.getElementById("meals-date").textContent = fmtLong(current);
+  }
+
+  // --- события ---
+  document.getElementById("daystrip").addEventListener("click", function(e){
+    var b = e.target.closest("[data-date]"); if(b){ current = b.dataset.date; render(); }
+  });
+  document.getElementById("diary").addEventListener("click", function(e){
+    var r = e.target.closest("tr[data-date]"); if(r){ current = r.dataset.date; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  });
+  document.getElementById("diary").addEventListener("keydown", function(e){
+    if(e.key !== "Enter" && e.key !== " ") return;
+    var r = e.target.closest("tr[data-date]");
+    if(r){ e.preventDefault(); current = r.dataset.date; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  });
+  var tip = document.getElementById("tip"), box = document.querySelector(".chartbox");
+  document.getElementById("weekchart").addEventListener("mousemove", function(e){
+    var h = e.target.closest(".hit");
+    if(!h){ tip.style.opacity = 0; return; }
+    var t = TOTALS[h.dataset.date], dlt = t.k - T.kcal, br = box.getBoundingClientRect();
+    tip.innerHTML = '<b>' + fmtLong(h.dataset.date) + '</b><br>' + nf(t.k) + ' ккал · ' +
+      (dlt>0 ? "+" : "−") + nf(Math.abs(dlt)) + ' к норме<br>' +
+      '<span class="tm">Б ' + r0(t.p) + ' · Ж ' + r0(t.f) + ' · У ' + r0(t.c) + '</span>';
+    tip.style.left = (e.clientX - br.left) + "px";
+    tip.style.top = (e.clientY - br.top - 12) + "px";
+    tip.style.opacity = 1;
+  });
+  document.getElementById("weekchart").addEventListener("mouseleave", function(){ tip.style.opacity = 0; });
+  document.getElementById("weekchart").addEventListener("click", function(e){
+    var h = e.target.closest(".hit"); if(h){ current = h.dataset.date; render(); }
+  });
+  document.getElementById("catsearch").addEventListener("input", function(e){
+    renderCatalog(e.target.value.trim().toLowerCase());
+  });
+
+  // --- шапка ---
+  document.getElementById("week-target").textContent = nf(T.kcal);
+  document.getElementById("hdr-eyebrow").textContent =
+    "Цель: " + P.weightKg + " → " + P.goalWeightKg + " кг · дефицит " + P.deficitPct + "%";
+  document.getElementById("hdr-sub").innerHTML =
+    "Норма <b>" + nf(T.kcal) + " ккал</b> в день: белки " + T.protein + " г, жиры " + T.fat +
+    " г, углеводы " + T.carbs + " г. Расчёт по формуле Миффлина — Сан Жеора с дефицитом " + P.deficitPct + "%.";
+
+  render();
+  renderMethod();
+  renderCatalog("");
+
+  if(P.placeholder){
+    var b = document.createElement("div");
+    b.className = "banner";
+    b.innerHTML = '<span aria-hidden="true">⚑</span><div><b>Это набросок на черновых данных.</b> ' +
+      'Параметры (' + P.age + ' лет, ' + P.heightCm + ' см, ' + P.weightKg + ' кг) и приёмы пищи, кроме завтрака 10 сентября, ' +
+      'подставлены для примера. Скажи свои рост, вес, возраст и уровень активности — нормы пересчитаются, ' +
+      'и дневник начнёт заполняться реальными днями.</div>';
+    document.querySelector(".masthead").insertAdjacentElement("afterend", b);
+  }
+})();
+</script>

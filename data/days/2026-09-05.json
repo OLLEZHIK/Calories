@@ -1,0 +1,12 @@
+{ "date": "2026-09-05", "example": true, "weightKg": 90.4, "note": "Пример: перебор — сыр, хлеб и орехи вечером.",
+  "meals": [
+    { "name": "Завтрак", "time": "09:00", "items": [
+      { "id": "egg", "pieces": 4 }, { "id": "bread_rye", "pieces": 2 }, { "id": "butter825", "g": 15 },
+      { "id": "tea_black", "pieces": 1 }, { "id": "sugar", "g": 10 } ] },
+    { "name": "Обед", "time": "14:00", "items": [
+      { "id": "beef_lean", "g": 250 }, { "id": "potato", "g": 350 }, { "id": "tomato", "pieces": 1 },
+      { "id": "oil_sunflower", "pieces": 1 } ] },
+    { "name": "Ужин", "time": "20:30", "items": [
+      { "id": "cheese45", "g": 100 }, { "id": "bread_rye", "pieces": 4 }, { "id": "yogurt32", "g": 200 } ] },
+    { "name": "Перекус", "time": "17:00", "items": [
+      { "id": "banana", "pieces": 1 }, { "id": "walnut", "g": 30 } ] } ] }

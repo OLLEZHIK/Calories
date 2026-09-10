@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "placeholder": true,
+  "comment": "placeholder=true — параметры пока черновые. Замени вес/рост/возраст/активность на свои, и цели пересчитаются.",
+  "name": "Виталий",
+  "sex": "male",
+  "age": 30,
+  "heightCm": 180,
+  "weightKg": 90,
+  "goalWeightKg": 80,
+  "activity": { "factor": 1.375, "label": "Лёгкая активность (1–3 тренировки в неделю)" },
+  "deficitPct": 20,
+  "targets": {
+    "kcal": 2100,
+    "protein": 162,
+    "fat": 81,
+    "carbs": 181,
+    "fiber": 30,
+    "waterMl": 2700
+  },
+  "method": {
+    "bmr": {
+      "name": "Миффлина — Сан Жеора",
+      "formula": "10 × вес(кг) + 6.25 × рост(см) − 5 × возраст + 5",
+      "value": 1880,
+      "note": "Самая точная из популярных формул: попадает в ±10% от измеренного метаболизма чаще остальных."
+    },
+    "tdee": {
+      "formula": "BMR × коэффициент активности",
+      "value": 2585
+    },
+    "deficit": {
+      "formula": "TDEE − 20%",
+      "value": 2068,
+      "rounded": 2100,
+      "note": "Дефицит 15–25% — умеренный: жир уходит ~0.5–0.8 кг/нед, мышцы при достаточном белке остаются."
+    },
+    "protein": {
+      "formula": "1.8 г на кг веса тела",
+      "value": 162,
+      "note": "Для сохранения мышц в дефиците нужно ≥1.2 г/кг; 1.6–2.2 г/кг — рабочий диапазон при похудении. Меньше 1.0 г/кг — мышцы начинают уходить вместе с жиром."
+    },
+    "fat": {
+      "formula": "0.9 г на кг веса тела",
+      "value": 81,
+      "note": "Не опускать ниже 0.6–0.8 г/кг: жиры нужны для гормонов и усвоения витаминов A, D, E, K."
+    },
+    "carbs": {
+      "formula": "(Калории − белки×4 − жиры×9) ÷ 4",
+      "value": 181,
+      "note": "Углеводы — остаток бюджета. Это топливо для тренировок, урезать их первыми при плато."
+    },
+    "sources": [
+      { "title": "Mifflin-St Jeor equation (точность RMR)", "url": "https://reference.medscape.com/calculator/846/mifflin-st-jeor-equation-calculator" },
+      { "title": "The role of protein in weight loss and maintenance, AJCN", "url": "https://ajcn.nutrition.org/article/S0002-9165(23)27427-4/fulltext" },
+      { "title": "Higher protein intake preserves lean mass during energy deficit (RCT)", "url": "https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext" },
+      { "title": "Enhanced protein intake & muscle mass in overweight adults (мета-анализ)", "url": "https://www.sciencedirect.com/science/article/abs/pii/S2405457724001761" }
+    ]
+  }
+}

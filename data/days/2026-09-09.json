@@ -1,0 +1,10 @@
+{ "date": "2026-09-09", "example": true, "weightKg": 89.8, "note": "Пример: недобор больше 15% — такой день тормозит обмен, а не ускоряет похудение.",
+  "meals": [
+    { "name": "Завтрак", "time": "09:15", "items": [
+      { "id": "egg", "pieces": 4 }, { "id": "bread_rye", "pieces": 2 }, { "id": "butter825", "g": 10 },
+      { "id": "tea_black", "pieces": 1 } ] },
+    { "name": "Обед", "time": "14:30", "items": [
+      { "id": "chicken_breast", "g": 250 }, { "id": "buckwheat_boil", "g": 200 },
+      { "id": "cucumber", "pieces": 1 }, { "id": "tomato", "pieces": 1 } ] },
+    { "name": "Ужин", "time": "20:10", "items": [
+      { "id": "tvorog5", "g": 250 }, { "id": "walnut", "g": 30 } ] } ] }
