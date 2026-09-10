@@ -229,13 +229,6 @@ footer p{margin:0 0 7px}
   .sect-head{row-gap:2px}
   .facts h2{font-size:19px}
   .sect-head h2{font-size:18px}
-  .phase-note{font-size:12px}
-
-  .mealcard .mc-k{font-size:23px}
-  .mealcard li{gap:8px}
-  .mealcard li .k{min-width:44px}
-  .activecard .ac-k{font-size:30px}
-
   .diary,.diary tbody{display:block; width:100%}
   .diary thead{display:none}
   .diary tr{
@@ -274,6 +267,24 @@ footer p{margin:0 0 7px}
   .macro .ring{width:92px; height:92px}
   .macro .rc .v{font-size:18px}
 }
+
+/* ---------- режим тренировок ---------- */
+.moderow{display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:16px 0 0}
+.modes{display:inline-flex; border:1px solid var(--ink); border-radius:2px; overflow:hidden}
+.mode{
+  appearance:none; border:0; background:var(--panel); color:var(--ink-2); cursor:pointer;
+  font-family:Oswald,sans-serif; font-size:13px; font-weight:600; letter-spacing:.05em;
+  text-transform:uppercase; padding:8px 15px 9px; line-height:1.2; text-align:left;
+  transition:background .12s ease, color .12s ease;
+}
+.mode + .mode{border-left:1px solid var(--ink)}
+.mode:hover{background:var(--panel-2)}
+.mode .ms{display:block; font-family:"JetBrains Mono",monospace; font-size:9.5px; font-weight:400;
+  letter-spacing:.08em; text-transform:none; color:var(--ink-3); margin-top:2px}
+.mode[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.mode[aria-pressed="true"]:hover{background:var(--ink)}
+.mode[aria-pressed="true"] .ms{color:var(--paper); opacity:.62}
+.mode-note{font-size:12.5px; color:var(--ink-2); padding:10px 0 0; max-width:78ch; margin:0}
 
 /* ---------- этап похудения ---------- */
 .phases{display:flex; gap:8px; overflow-x:auto; padding:14px 0 4px; scrollbar-width:none}
@@ -330,6 +341,20 @@ footer p{margin:0 0 7px}
 .activecard .ac-budget{font-size:12.5px; color:var(--ink-2)}
 .activecard .ac-budget b{font-family:"JetBrains Mono",monospace; font-variant-numeric:tabular-nums}
 .activecard .ac-note{font-size:11.5px; color:var(--ink-3); margin-top:9px; max-width:62ch}
+
+/* ---------- телефон: блоки, объявленные ниже медиа-запросов выше ---------- */
+@media (max-width:600px){
+  .phase-note{font-size:12px}
+  .moderow{gap:8px; padding-top:14px}
+  .modes{display:grid; grid-template-columns:1fr 1fr; width:100%}
+  .mode{padding:8px 10px 9px; font-size:12px}
+  .mode .ms{font-size:9px}
+  .phase{min-width:118px; padding:8px 11px 9px}
+  .mealcard .mc-k{font-size:23px}
+  .mealcard li{gap:8px}
+  .mealcard li .k{min-width:44px}
+  .activecard .ac-k{font-size:30px}
+}
 </style>
 
 <div class="wrap">
@@ -342,6 +367,13 @@ footer p{margin:0 0 7px}
     <p class="sub" id="hdr-sub"></p>
   </header>
   <hr class="rule-heavy">
+
+  <div class="moderow">
+    <span class="eyebrow">Режим тренировок</span>
+    <nav class="modes" id="modes" aria-label="Режим тренировок"></nav>
+  </div>
+  <p class="mode-note" id="mode-note"></p>
+  <hr class="rule-hair">
 
   <nav class="phases" id="phases" aria-label="Этап похудения"></nav>
   <p class="phase-note" id="phase-note"></p>
@@ -480,12 +512,23 @@ footer p{margin:0 0 7px}
   "use strict";
   var DATA = JSON.parse(document.getElementById("app-data").textContent);
   var P = DATA.profile;
-  var PHASES = P.phases && P.phases.length ? P.phases : [
+  var FALLBACK = [
     { id:"base", label:"Норма", range:"", deficitPct:P.deficitPct || 0,
       tdee:(P.method && P.method.tdee ? P.method.tdee.value : 0), targets:P.targets, note:"" }
   ];
-  var phaseId = P.activePhase || PHASES[0].id;
-  function PH(){ return PHASES.filter(function(x){ return x.id === phaseId; })[0] || PHASES[0]; }
+  var MODES = P.modes && P.modes.length ? P.modes : null;
+  var modeId = P.activeMode || (MODES ? MODES[0].id : null);
+  function MODE(){ return MODES ? (MODES.filter(function(x){ return x.id === modeId; })[0] || MODES[0]) : null; }
+  function PHASES(){
+    var m = MODE();
+    if(m && m.phases && m.phases.length) return m.phases;
+    return P.phases && P.phases.length ? P.phases : FALLBACK;
+  }
+  var phaseId = P.activePhase || PHASES()[0].id;
+  function PH(){
+    var list = PHASES();
+    return list.filter(function(x){ return x.id === phaseId; })[0] || list[0];
+  }
   var T = PH().targets;
 
   var MEAL_ORDER = [
@@ -757,8 +800,12 @@ footer p{margin:0 0 7px}
       { e:"Шаг 3 · Этап «" + PH().label + "»", v:nf(T.kcal), u:"ккал",
         f:PH().deficitPct ? "TDEE − " + PH().deficitPct + "% → округлено" : "Без дефицита → округлено",
         n:PH().deficitNote || M.deficit.note },
-      { e:"Темп", v:M.rate ? M.rate.value : "—", u:"г жира в неделю",
-        f:M.rate ? M.rate.formula : "", n:M.rate ? M.rate.note : "" },
+      { e:"Темп", v:PH().fatLossGPerWeek != null ? (PH().fatLossGPerWeek || "—") : (M.rate ? M.rate.value : "—"),
+        u:PH().fatLossGPerWeek ? "г жира в неделю" : "",
+        f:PH().fatLossGPerWeek
+            ? "(" + nf(PH().tdee) + " − " + nf(T.kcal) + ") × 7 ÷ 7 700 = " + (PH().fatLossGPerWeek/1000).toFixed(2) + " кг в неделю"
+            : "На этом этапе вес держится, а не снижается",
+        n:M.rate ? M.rate.note : "" },
       { e:"Белки", v:T.protein, u:"г", f:M.protein.formula, n:M.protein.note },
       { e:"Жиры", v:T.fat, u:"г", f:M.fat.formula, n:M.fat.note },
       { e:"Углеводы", v:T.carbs, u:"г", f:M.carbs.formula, n:M.carbs.note },
@@ -793,9 +840,20 @@ footer p{margin:0 0 7px}
     document.getElementById("catcount").textContent = list.length + " из " + DATA.foods.length + " продуктов";
   }
 
+  // --- режимы ---
+  function renderModes(){
+    var box = document.getElementById("modes"), note = document.getElementById("mode-note");
+    if(!MODES){ box.parentNode.hidden = true; note.hidden = true; return; }
+    box.innerHTML = MODES.map(function(m){
+      return '<button class="mode" type="button" data-mode="' + m.id + '" aria-pressed="' + (m.id === modeId) + '">' +
+        m.label + (m.sub ? '<span class="ms">' + m.sub + '</span>' : '') + '</button>';
+    }).join("");
+    note.textContent = MODE().note || "";
+  }
+
   // --- этапы ---
   function renderPhases(){
-    document.getElementById("phases").innerHTML = PHASES.map(function(ph){
+    document.getElementById("phases").innerHTML = PHASES().map(function(ph){
       return '<button class="phase" type="button" data-phase="' + ph.id + '" aria-pressed="' + (ph.id === phaseId) + '">' +
         '<span class="pl">' + ph.label + '</span>' +
         '<span class="pk">' + nf(ph.targets.kcal) + ' ккал' + (ph.deficitPct ? ' · −' + ph.deficitPct + '%' : '') + '</span>' +
@@ -808,7 +866,8 @@ footer p{margin:0 0 7px}
     var ph = PH();
     document.getElementById("week-target").textContent = nf(T.kcal);
     document.getElementById("hdr-eyebrow").textContent =
-      "Этап: " + ph.label.toLowerCase() + " · " + P.weightKg + " → " + P.goalWeightKg + " кг" +
+      (MODE() ? MODE().label + " · " : "") + ph.label.toLowerCase() +
+      " · " + (ph.range || P.weightKg + " → " + P.goalWeightKg + " кг") +
       (ph.deficitPct ? " · дефицит " + ph.deficitPct + "%" : "");
     document.getElementById("hdr-sub").innerHTML =
       "Норма <b>" + nf(T.kcal) + " ккал</b> в день: белки " + T.protein + " г, жиры " + T.fat +
@@ -820,7 +879,7 @@ footer p{margin:0 0 7px}
 
   // --- общий рендер ---
   function render(){
-    renderPhases(); renderHeader(); renderMethod();
+    renderModes(); renderPhases(); renderHeader(); renderMethod();
     if(EMPTY){
       var zero = { k:0, p:0, f:0, c:0 }, pill = document.getElementById("status-pill");
       renderDial(zero); renderMacros(zero);
@@ -852,6 +911,14 @@ footer p{margin:0 0 7px}
   }
 
   // --- события ---
+  document.getElementById("modes").addEventListener("click", function(e){
+    var b = e.target.closest("[data-mode]");
+    if(!b) return;
+    modeId = b.dataset.mode;
+    if(!PHASES().filter(function(x){ return x.id === phaseId; }).length) phaseId = PHASES()[0].id;
+    T = PH().targets;
+    render();
+  });
   document.getElementById("phases").addEventListener("click", function(e){
     var b = e.target.closest("[data-phase]");
     if(b){ phaseId = b.dataset.phase; T = PH().targets; render(); }
