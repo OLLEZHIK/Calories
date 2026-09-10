@@ -32,4 +32,5 @@ if (!template.includes("__DATA__")) {
 }
 writeFileSync(join(root, "app/index.html"), template.replace("__DATA__", payload));
 
-console.log(`Готово: app/index.html — ${foods.length} продуктов, ${days.length} дней (${days[0].date} … ${days.at(-1).date}).`);
+const span = days.length ? ` (${days[0].date} … ${days.at(-1).date})` : " — дневник пуст";
+console.log(`Готово: app/index.html — ${foods.length} продуктов, ${days.length} дней${span}.`);

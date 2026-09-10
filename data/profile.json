@@ -1,60 +1,154 @@
 {
-  "version": 1,
-  "placeholder": true,
-  "comment": "placeholder=true — параметры пока черновые. Замени вес/рост/возраст/активность на свои, и цели пересчитаются.",
+  "version": 2,
+  "placeholder": false,
+  "toConfirm": [
+    "heightCm",
+    "age",
+    "activity"
+  ],
+  "comment": "Вес и цель — твои. Рост, возраст и уровень активности пока прежние: подтверди или поправь, нормы пересчитаются.",
   "name": "Виталий",
   "sex": "male",
   "age": 30,
   "heightCm": 180,
-  "weightKg": 90,
-  "goalWeightKg": 80,
-  "activity": { "factor": 1.375, "label": "Лёгкая активность (1–3 тренировки в неделю)" },
-  "deficitPct": 20,
+  "weightKg": 74,
+  "goalWeightKg": 67,
+  "activity": {
+    "factor": 1.375,
+    "label": "Лёгкая активность (1–3 тренировки в неделю)"
+  },
+  "activePhase": "loss",
+  "phases": [
+    {
+      "id": "loss",
+      "label": "Похудение",
+      "range": "74 → 67 кг",
+      "deficitPct": 20,
+      "tdee": 2365,
+      "targets": {
+        "kcal": 1900,
+        "protein": 133,
+        "fat": 67,
+        "carbs": 191,
+        "fiber": 30,
+        "waterMl": 2200
+      },
+      "note": "Дефицит 465 ккал в день — это примерно 0.4 кг жира в неделю. Семь килограммов уходят за 16–18 недель.",
+      "deficitNote": "Дефицит 15–25% — умеренный: жир уходит ~0.4–0.6 кг/нед, мышцы при достаточном белке остаются."
+    },
+    {
+      "id": "soft",
+      "label": "Мягкий дефицит",
+      "range": "когда тяжело держать 1 900",
+      "deficitPct": 10,
+      "tdee": 2365,
+      "targets": {
+        "kcal": 2150,
+        "protein": 133,
+        "fat": 67,
+        "carbs": 254,
+        "fiber": 30,
+        "waterMl": 2200
+      },
+      "note": "Запасной этап на тяжёлые недели: вес идёт вниз медленнее (~0.2 кг/нед), зато срывов меньше.",
+      "deficitNote": "Дефицит 10% — минимальный рабочий: медленно, но почти без потери сил и мышц."
+    },
+    {
+      "id": "hold",
+      "label": "Поддержание",
+      "range": "пауза на текущем весе",
+      "deficitPct": 0,
+      "tdee": 2365,
+      "targets": {
+        "kcal": 2350,
+        "protein": 133,
+        "fat": 67,
+        "carbs": 304,
+        "fiber": 30,
+        "waterMl": 2200
+      },
+      "note": "Диетическая пауза на 1–2 недели: обмен и гормоны голода возвращаются к норме, потом снова в дефицит.",
+      "deficitNote": "Ноль дефицита — держим вес там, где он есть."
+    },
+    {
+      "id": "goal",
+      "label": "Цель 67 кг",
+      "range": "после похудения",
+      "deficitPct": 0,
+      "tdee": 2270,
+      "targets": {
+        "kcal": 2270,
+        "protein": 121,
+        "fat": 60,
+        "carbs": 312,
+        "fiber": 30,
+        "waterMl": 2000
+      },
+      "note": "Нормы на целевом весе: столько нужно, чтобы удерживать 67 кг, когда дойдёшь.",
+      "deficitNote": "На новом весе расход ниже — 2 270 ккал вместо 2 365."
+    }
+  ],
   "targets": {
-    "kcal": 2100,
-    "protein": 162,
-    "fat": 81,
-    "carbs": 181,
+    "kcal": 1900,
+    "protein": 133,
+    "fat": 67,
+    "carbs": 191,
     "fiber": 30,
-    "waterMl": 2700
+    "waterMl": 2200
   },
   "method": {
     "bmr": {
       "name": "Миффлина — Сан Жеора",
-      "formula": "10 × вес(кг) + 6.25 × рост(см) − 5 × возраст + 5",
-      "value": 1880,
+      "formula": "10 × 74 + 6.25 × 180 − 5 × 30 + 5",
+      "value": 1720,
       "note": "Самая точная из популярных формул: попадает в ±10% от измеренного метаболизма чаще остальных."
     },
     "tdee": {
       "formula": "BMR × коэффициент активности",
-      "value": 2585
+      "value": 2365
     },
     "deficit": {
-      "formula": "TDEE − 20%",
-      "value": 2068,
-      "rounded": 2100,
-      "note": "Дефицит 15–25% — умеренный: жир уходит ~0.5–0.8 кг/нед, мышцы при достаточном белке остаются."
+      "formula": "TDEE − дефицит этапа",
+      "value": 1892,
+      "rounded": 1900,
+      "note": "Дефицит 15–25% — умеренный: жир уходит ~0.4–0.6 кг/нед, мышцы при достаточном белке остаются."
     },
     "protein": {
       "formula": "1.8 г на кг веса тела",
-      "value": 162,
-      "note": "Для сохранения мышц в дефиците нужно ≥1.2 г/кг; 1.6–2.2 г/кг — рабочий диапазон при похудении. Меньше 1.0 г/кг — мышцы начинают уходить вместе с жиром."
+      "value": 133,
+      "note": "Для сохранения мышц в дефиците нужно ≥1.2 г/кг; 1.6–2.2 г/кг — рабочий диапазон при похудении."
     },
     "fat": {
       "formula": "0.9 г на кг веса тела",
-      "value": 81,
+      "value": 67,
       "note": "Не опускать ниже 0.6–0.8 г/кг: жиры нужны для гормонов и усвоения витаминов A, D, E, K."
     },
     "carbs": {
       "formula": "(Калории − белки×4 − жиры×9) ÷ 4",
-      "value": 181,
+      "value": 191,
       "note": "Углеводы — остаток бюджета. Это топливо для тренировок, урезать их первыми при плато."
     },
+    "activeKcal": {
+      "formula": "Активные калории из часов",
+      "note": "Норма уже включает лёгкую активность (коэффициент 1.375). Поэтому активные калории из часов не прибавляются к норме автоматически — они показаны отдельно, а бюджет с ними считается только для тренировочных дней."
+    },
     "sources": [
-      { "title": "Mifflin-St Jeor equation (точность RMR)", "url": "https://reference.medscape.com/calculator/846/mifflin-st-jeor-equation-calculator" },
-      { "title": "The role of protein in weight loss and maintenance, AJCN", "url": "https://ajcn.nutrition.org/article/S0002-9165(23)27427-4/fulltext" },
-      { "title": "Higher protein intake preserves lean mass during energy deficit (RCT)", "url": "https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext" },
-      { "title": "Enhanced protein intake & muscle mass in overweight adults (мета-анализ)", "url": "https://www.sciencedirect.com/science/article/abs/pii/S2405457724001761" }
+      {
+        "title": "Mifflin-St Jeor equation (точность RMR)",
+        "url": "https://reference.medscape.com/calculator/846/mifflin-st-jeor-equation-calculator"
+      },
+      {
+        "title": "The role of protein in weight loss and maintenance, AJCN",
+        "url": "https://ajcn.nutrition.org/article/S0002-9165(23)27427-4/fulltext"
+      },
+      {
+        "title": "Higher protein intake preserves lean mass during energy deficit (RCT)",
+        "url": "https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext"
+      },
+      {
+        "title": "Enhanced protein intake & muscle mass in overweight adults (мета-анализ)",
+        "url": "https://www.sciencedirect.com/science/article/abs/pii/S2405457724001761"
+      }
     ]
   }
 }

@@ -116,31 +116,6 @@ a{color:inherit}
 .facts{margin-top:22px}
 .facts .fhead{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; padding:0 0 6px}
 .facts h2{font-size:22px; text-transform:uppercase; letter-spacing:.01em}
-.mealtable{width:100%; border-collapse:collapse; font-size:14px}
-.mealtable th,.mealtable td{padding:7px 8px; text-align:right; vertical-align:baseline}
-.mealtable th:first-child,.mealtable td:first-child{text-align:left; padding-left:0}
-.mealtable td:last-child,.mealtable th:last-child{padding-right:0}
-.mealtable thead th{
-  font-family:"JetBrains Mono",monospace; font-weight:500; font-size:10.5px; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--ink-3); border-bottom:1px solid var(--hair); padding-bottom:5px;
-}
-.mealtable tr.meal-h td{
-  padding-top:15px; border-top:3px solid var(--rule);
-  font-family:Oswald,sans-serif; font-size:15px; font-weight:600; text-transform:uppercase; letter-spacing:.03em;
-}
-.mealtable tr.meal-h td .time{font-family:"JetBrains Mono",monospace; font-size:11px; font-weight:400; color:var(--ink-3); letter-spacing:0; text-transform:none; margin-left:8px}
-.mealtable tr.item td{border-top:1px solid var(--hair)}
-.mealtable tr.item td:first-child{font-weight:500}
-.mealtable tr.item .g{font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--ink-2)}
-.mealtable tr.item .n{font-variant-numeric:tabular-nums}
-.mealtable tr.sub td{border-top:1px solid var(--hair); font-size:12.5px; color:var(--ink-2); padding-top:6px}
-.mealtable tr.sub td.lbl{font-family:"JetBrains Mono",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase}
-.mealtable tr.sub td{font-variant-numeric:tabular-nums}
-.mealtable tfoot td{
-  border-top:7px solid var(--rule); padding-top:11px;
-  font-family:Oswald,sans-serif; font-weight:600; font-size:17px; font-variant-numeric:tabular-nums;
-}
-.mealtable tfoot td:first-child{text-transform:uppercase; letter-spacing:.03em}
 .tbl-scroll{overflow-x:auto}
 .itemnote{display:block; font-size:11.5px; color:var(--ink-3); font-weight:400}
 
@@ -178,6 +153,9 @@ a{color:inherit}
 .delta.over{color:var(--crit); font-weight:600}
 .delta.under{color:var(--ink-2)}
 .dow{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--ink-3); margin-left:7px; font-weight:400}
+.diary td:nth-child(4)::after,.diary td:nth-child(5)::after,.diary td:nth-child(6)::after{content:" г"; color:var(--ink-3)}
+.diary td:nth-child(7)::after{content:" кг"; color:var(--ink-3)}
+.diary td.na::after{content:""}
 
 /* ---------- targets / method ---------- */
 .method{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--hair)}
@@ -222,12 +200,67 @@ footer{margin-top:48px; padding-top:18px; border-top:3px solid var(--rule); font
 footer code{font-family:"JetBrains Mono",monospace; font-size:11.5px; background:var(--panel-2); padding:1px 5px; border-radius:2px}
 footer p{margin:0 0 7px}
 
+/* ---------- пустой дневник ---------- */
+.empty{border:1px solid var(--hair); background:var(--panel); padding:26px 22px 28px; margin-top:14px}
+.empty p{margin:0 0 10px; color:var(--ink-2); font-size:14px; max-width:62ch; line-height:1.6}
+.empty p:last-child{margin-bottom:0}
+.empty .big{font-family:Oswald,sans-serif; font-size:22px; font-weight:600; color:var(--ink); text-transform:uppercase; letter-spacing:.02em}
+.empty b{color:var(--ink)}
+.empty .q{font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--ink-3); padding-top:12px; border-top:1px solid var(--hair); margin-top:16px}
+.empty .q b{font-family:Oswald,sans-serif; font-size:14px}
+
 :focus-visible{outline:2px solid var(--ink); outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
 @media (max-width:860px){
   .grid-top{grid-template-columns:1fr}
   .method{grid-template-columns:repeat(2,minmax(0,1fr))}
   .dial{width:190px; height:190px}
+}
+/* ---------- телефон ---------- */
+@media (max-width:600px){
+  .masthead{flex-direction:column; align-items:flex-start; gap:6px}
+  .masthead .sub{max-width:none; font-size:13px}
+  .panel-head{flex-wrap:wrap; row-gap:3px}
+  .sect-head{row-gap:2px}
+  .facts h2{font-size:19px}
+  .sect-head h2{font-size:18px}
+  .phase-note{font-size:12px}
+
+  .mealcard .mc-k{font-size:23px}
+  .mealcard li{gap:8px}
+  .mealcard li .k{min-width:44px}
+  .activecard .ac-k{font-size:30px}
+
+  .diary,.diary tbody{display:block; width:100%}
+  .diary thead{display:none}
+  .diary tr{
+    display:grid; grid-template-columns:minmax(0,1fr) 44px 44px 44px 54px;
+    grid-template-areas:"dd dd dd dd kk" "de bb ff cc ww";
+    column-gap:10px; row-gap:3px; padding:11px 14px; border-bottom:1px solid var(--hair);
+  }
+  .diary td{border:0; padding:0; text-align:right}
+  .diary td:nth-child(1){grid-area:dd; text-align:left; padding-left:0}
+  .diary td:nth-child(2){grid-area:kk; font-family:Oswald,sans-serif; font-weight:600; font-size:18px}
+  .diary td:nth-child(3){grid-area:de; text-align:left}
+  .diary td:nth-child(4){grid-area:bb}
+  .diary td:nth-child(5){grid-area:ff}
+  .diary td:nth-child(6){grid-area:cc}
+  .diary td:nth-child(7){grid-area:ww}
+  .diary td:nth-child(n+3){font-family:"JetBrains Mono",monospace; font-size:11.5px; color:var(--ink-2)}
+  .diary td.delta.over{color:var(--crit); font-weight:600}
+  .diary td:nth-child(4)::before{content:"Б "; color:var(--ink-3)}
+  .diary td:nth-child(5)::before{content:"Ж "; color:var(--ink-3)}
+  .diary td:nth-child(6)::before{content:"У "; color:var(--ink-3)}
+  .diary td:nth-child(4)::after,.diary td:nth-child(5)::after,.diary td:nth-child(6)::after{content:""}
+  .diary tr[aria-current="true"]{box-shadow:inset 4px 0 0 var(--ink)}
+  .diary tr[aria-current="true"] td:first-child{box-shadow:none}
+
+  .cat{min-width:560px}
+  .searchrow{padding:12px 14px}
+  .cat th:first-child,.cat td:first-child{padding-left:14px}
+  .cat th:last-child,.cat td:last-child{padding-right:14px}
+  .empty{padding:22px 16px 24px}
+  .empty .big{font-size:19px}
 }
 @media (max-width:430px){
   .wrap{padding-block:20px 44px}
@@ -236,6 +269,62 @@ footer p{margin:0 0 7px}
   .macro .ring{width:92px; height:92px}
   .macro .rc .v{font-size:18px}
 }
+
+/* ---------- этап похудения ---------- */
+.phases{display:flex; gap:8px; overflow-x:auto; padding:14px 0 4px; scrollbar-width:none}
+.phases::-webkit-scrollbar{display:none}
+.phase{
+  flex:0 0 auto; min-width:132px; text-align:left; cursor:pointer;
+  background:var(--panel); border:1px solid var(--hair); border-radius:3px;
+  padding:9px 13px 10px; font:inherit; color:inherit; box-shadow:var(--shadow);
+}
+.phase:hover{border-color:var(--ink-3)}
+.phase .pl{display:block; font-family:Oswald,sans-serif; font-weight:600; font-size:13.5px; text-transform:uppercase; letter-spacing:.04em}
+.phase .pk{display:block; font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--ink-2); margin-top:3px}
+.phase .pr{display:block; font-size:11px; color:var(--ink-3); margin-top:1px}
+.phase[aria-pressed="true"]{background:var(--ink); border-color:var(--ink)}
+.phase[aria-pressed="true"] .pl,.phase[aria-pressed="true"] .pk,.phase[aria-pressed="true"] .pr{color:var(--paper)}
+.phase-note{font-size:12.5px; color:var(--ink-2); padding:2px 0 12px; max-width:70ch}
+
+/* ---------- приёмы пищи блоками ---------- */
+.meals{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin-top:14px}
+@media (max-width:760px){ .meals{grid-template-columns:1fr} }
+.mealcard{
+  background:var(--panel); border:1px solid var(--hair); border-top:4px solid var(--accent);
+  border-radius:3px; box-shadow:var(--shadow); display:flex; flex-direction:column;
+}
+.mealcard.empty{border-style:dashed; border-top-style:solid; background:transparent}
+.mealcard .mc-head{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:11px 14px 8px}
+.mealcard .mc-name{font-family:Oswald,sans-serif; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.05em; color:var(--accent)}
+.mealcard .mc-time{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--ink-3)}
+.mealcard .mc-sum{display:flex; align-items:baseline; gap:8px; padding:0 14px 10px; border-bottom:1px solid var(--hair)}
+.mealcard .mc-k{font-family:Oswald,sans-serif; font-weight:600; font-size:26px; font-variant-numeric:tabular-nums; line-height:1}
+.mealcard .mc-k small{font-size:12px; font-weight:500; color:var(--ink-3); margin-left:4px}
+.mealcard .mc-macro{margin-left:auto; font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--ink-2); white-space:nowrap}
+.mealcard .mc-bar{height:4px; background:var(--track)}
+.mealcard .mc-bar i{display:block; height:100%; background:var(--accent)}
+.mealcard ul{list-style:none; margin:0; padding:6px 14px 12px; display:flex; flex-direction:column}
+.mealcard li{display:flex; align-items:baseline; gap:10px; padding:6px 0; border-top:1px solid var(--hair); font-size:13.5px}
+.mealcard li:first-child{border-top:0}
+.mealcard li .nm{flex:1; min-width:0}
+.mealcard li .nm i{display:block; font-style:normal; font-size:11px; color:var(--ink-3)}
+.mealcard li .g{font-family:"JetBrains Mono",monospace; font-size:11.5px; color:var(--ink-3); white-space:nowrap}
+.mealcard li .k{font-family:"JetBrains Mono",monospace; font-size:12.5px; font-variant-numeric:tabular-nums; min-width:52px; text-align:right}
+.mealcard .mc-empty{padding:14px; font-size:13px; color:var(--ink-3)}
+
+/* ---------- активные калории ---------- */
+.activecard{
+  background:var(--panel); border:1px solid var(--hair); border-top:4px solid var(--ink);
+  border-radius:3px; box-shadow:var(--shadow); padding:12px 14px 14px; margin-top:12px;
+}
+.activecard .ac-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+.activecard .ac-name{font-family:Oswald,sans-serif; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.05em}
+.activecard .ac-row{display:flex; align-items:flex-end; gap:16px; flex-wrap:wrap; margin-top:8px}
+.activecard .ac-k{font-family:Oswald,sans-serif; font-weight:600; font-size:34px; line-height:1; font-variant-numeric:tabular-nums}
+.activecard .ac-k small{font-size:13px; font-weight:500; color:var(--ink-3); margin-left:5px}
+.activecard .ac-budget{font-size:12.5px; color:var(--ink-2)}
+.activecard .ac-budget b{font-family:"JetBrains Mono",monospace; font-variant-numeric:tabular-nums}
+.activecard .ac-note{font-size:11.5px; color:var(--ink-3); margin-top:9px; max-width:62ch}
 </style>
 
 <div class="wrap">
@@ -248,6 +337,10 @@ footer p{margin:0 0 7px}
     <p class="sub" id="hdr-sub"></p>
   </header>
   <hr class="rule-heavy">
+
+  <nav class="phases" id="phases" aria-label="Этап похудения"></nav>
+  <p class="phase-note" id="phase-note"></p>
+  <hr class="rule-hair">
 
   <nav class="daystrip" id="daystrip" aria-label="Выбор дня"></nav>
 
@@ -289,12 +382,17 @@ footer p{margin:0 0 7px}
       <span class="eyebrow" id="meals-date"></span>
     </div>
     <hr class="rule-heavy">
-    <div class="tbl-scroll">
-      <table class="mealtable" id="mealtable"></table>
+    <div class="meals" id="meals"></div>
+    <div class="activecard" id="activecard"></div>
+    <div class="empty" id="empty" hidden>
+      <p class="big">Дневник пуст.</p>
+      <p>Напиши мне, что ты съел — например: <b>«завтрак: 4 яйца, 50 г сыра, чай с 20 г сахара»</b>.
+         Я найду продукты в базе ниже, добавлю недостающие и заведу файл дня.</p>
+      <p class="q"></p>
     </div>
   </section>
 
-  <section class="sect" aria-labelledby="h-week">
+  <section class="sect" id="sect-week" aria-labelledby="h-week">
     <div class="sect-head">
       <h2 id="h-week">Калории по дням</h2>
       <span class="note">Тёмная часть столбца — до нормы, красная — перебор. Норма <span class="mono" id="week-target"></span> ккал.</span>
@@ -312,7 +410,7 @@ footer p{margin:0 0 7px}
     </div>
   </section>
 
-  <section class="sect" aria-labelledby="h-diary">
+  <section class="sect" id="sect-diary" aria-labelledby="h-diary">
     <div class="sect-head">
       <h2 id="h-diary">Дневник</h2>
       <span class="note">Нажми на строку, чтобы открыть день.</span>
@@ -371,12 +469,34 @@ footer p{margin:0 0 7px}
   </footer>
 </div>
 
-<script id="app-data" type="application/json">{"profile":{"version":1,"placeholder":true,"comment":"placeholder=true — параметры пока черновые. Замени вес/рост/возраст/активность на свои, и цели пересчитаются.","name":"Виталий","sex":"male","age":30,"heightCm":180,"weightKg":90,"goalWeightKg":80,"activity":{"factor":1.375,"label":"Лёгкая активность (1–3 тренировки в неделю)"},"deficitPct":20,"targets":{"kcal":2100,"protein":162,"fat":81,"carbs":181,"fiber":30,"waterMl":2700},"method":{"bmr":{"name":"Миффлина — Сан Жеора","formula":"10 × вес(кг) + 6.25 × рост(см) − 5 × возраст + 5","value":1880,"note":"Самая точная из популярных формул: попадает в ±10% от измеренного метаболизма чаще остальных."},"tdee":{"formula":"BMR × коэффициент активности","value":2585},"deficit":{"formula":"TDEE − 20%","value":2068,"rounded":2100,"note":"Дефицит 15–25% — умеренный: жир уходит ~0.5–0.8 кг/нед, мышцы при достаточном белке остаются."},"protein":{"formula":"1.8 г на кг веса тела","value":162,"note":"Для сохранения мышц в дефиците нужно ≥1.2 г/кг; 1.6–2.2 г/кг — рабочий диапазон при похудении. Меньше 1.0 г/кг — мышцы начинают уходить вместе с жиром."},"fat":{"formula":"0.9 г на кг веса тела","value":81,"note":"Не опускать ниже 0.6–0.8 г/кг: жиры нужны для гормонов и усвоения витаминов A, D, E, K."},"carbs":{"formula":"(Калории − белки×4 − жиры×9) ÷ 4","value":181,"note":"Углеводы — остаток бюджета. Это топливо для тренировок, урезать их первыми при плато."},"sources":[{"title":"Mifflin-St Jeor equation (точность RMR)","url":"https://reference.medscape.com/calculator/846/mifflin-st-jeor-equation-calculator"},{"title":"The role of protein in weight loss and maintenance, AJCN","url":"https://ajcn.nutrition.org/article/S0002-9165(23)27427-4/fulltext"},{"title":"Higher protein intake preserves lean mass during energy deficit (RCT)","url":"https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext"},{"title":"Enhanced protein intake & muscle mass in overweight adults (мета-анализ)","url":"https://www.sciencedirect.com/science/article/abs/pii/S2405457724001761"}]}},"foods":[{"id":"egg","name":"Яйцо куриное","cat":"Белковое","per100":{"k":157,"p":12.7,"f":11.5,"c":0.7},"piece":{"label":"шт","g":57}},{"id":"egg_white","name":"Яичный белок","cat":"Белковое","per100":{"k":48,"p":11.1,"f":0.2,"c":0.7},"piece":{"label":"шт","g":33}},{"id":"chicken_breast","name":"Куриная грудка, филе","cat":"Белковое","per100":{"k":113,"p":23.6,"f":1.9,"c":0.4},"piece":null},{"id":"chicken_thigh","name":"Куриное бедро без кожи","cat":"Белковое","per100":{"k":185,"p":17,"f":13,"c":0},"piece":null},{"id":"beef_lean","name":"Говядина постная","cat":"Белковое","per100":{"k":187,"p":18.9,"f":12.4,"c":0},"piece":null},{"id":"salmon","name":"Лосось","cat":"Белковое","per100":{"k":208,"p":20,"f":13,"c":0},"piece":null},{"id":"tvorog5","name":"Творог 5%","cat":"Молочное","per100":{"k":121,"p":17.2,"f":5,"c":1.8},"piece":null},{"id":"yogurt32","name":"Йогурт натуральный 3.2%","cat":"Молочное","per100":{"k":66,"p":5,"f":3.2,"c":3.5},"piece":null},{"id":"milk25","name":"Молоко 2.5%","cat":"Молочное","per100":{"k":52,"p":2.9,"f":2.5,"c":4.7},"piece":null},{"id":"cheese45","name":"Сыр полутвёрдый 45%","cat":"Молочное","per100":{"k":356,"p":24.9,"f":27.4,"c":1.3},"piece":null},{"id":"oats","name":"Овсяные хлопья, сухие","cat":"Крупы","per100":{"k":366,"p":12.3,"f":6.1,"c":59.5},"piece":null},{"id":"buckwheat_dry","name":"Гречка, сухая","cat":"Крупы","per100":{"k":343,"p":12.6,"f":3.3,"c":62},"piece":null},{"id":"buckwheat_boil","name":"Гречка, варёная","cat":"Крупы","per100":{"k":110,"p":4.2,"f":1.1,"c":21.3},"piece":null},{"id":"rice_dry","name":"Рис белый, сухой","cat":"Крупы","per100":{"k":344,"p":6.7,"f":0.7,"c":78.9},"piece":null},{"id":"bread_rye","name":"Хлеб ржаной","cat":"Хлеб","per100":{"k":208,"p":6.8,"f":1.3,"c":39.8},"piece":{"label":"ломтик","g":30}},{"id":"potato","name":"Картофель","cat":"Овощи","per100":{"k":77,"p":2,"f":0.4,"c":16.3},"piece":null},{"id":"tomato","name":"Помидор","cat":"Овощи","per100":{"k":18,"p":0.9,"f":0.2,"c":3.9},"piece":{"label":"шт","g":120}},{"id":"cucumber","name":"Огурец","cat":"Овощи","per100":{"k":15,"p":0.7,"f":0.1,"c":3.6},"piece":{"label":"шт","g":100}},{"id":"banana","name":"Банан","cat":"Фрукты","per100":{"k":89,"p":1.1,"f":0.3,"c":21.8},"piece":{"label":"шт","g":120}},{"id":"apple","name":"Яблоко","cat":"Фрукты","per100":{"k":52,"p":0.3,"f":0.2,"c":11.4},"piece":{"label":"шт","g":180}},{"id":"walnut","name":"Грецкий орех","cat":"Орехи","per100":{"k":654,"p":15.2,"f":65.2,"c":13.7},"piece":null},{"id":"oil_sunflower","name":"Масло подсолнечное","cat":"Жиры","per100":{"k":899,"p":0,"f":99.9,"c":0},"piece":{"label":"ст. л.","g":17}},{"id":"butter825","name":"Масло сливочное 82.5%","cat":"Жиры","per100":{"k":748,"p":0.5,"f":82.5,"c":0.8},"piece":null},{"id":"sugar","name":"Сахар","cat":"Прочее","per100":{"k":399,"p":0,"f":0,"c":99.8},"piece":{"label":"ч. л.","g":5}},{"id":"tea_black","name":"Чай чёрный без сахара","cat":"Напитки","per100":{"k":0,"p":0,"f":0,"c":0},"piece":{"label":"чашка","g":250}},{"id":"coffee_black","name":"Кофе чёрный без сахара","cat":"Напитки","per100":{"k":2,"p":0.2,"f":0,"c":0},"piece":{"label":"чашка","g":200}}],"days":[{"date":"2026-09-04","example":true,"weightKg":90.6,"note":"Пример: обычный рабочий день, почти точно в норму.","meals":[{"name":"Завтрак","time":"08:30","items":[{"id":"oats","g":90},{"id":"milk25","g":250},{"id":"banana","pieces":1},{"id":"coffee_black","pieces":1}]},{"name":"Обед","time":"13:30","items":[{"id":"chicken_breast","g":220},{"id":"buckwheat_boil","g":300},{"id":"cucumber","pieces":1},{"id":"oil_sunflower","pieces":1},{"id":"bread_rye","pieces":2}]},{"name":"Ужин","time":"19:40","items":[{"id":"tvorog5","g":250},{"id":"apple","pieces":1}]},{"name":"Перекус","time":"16:10","items":[{"id":"walnut","g":35}]}]},{"date":"2026-09-05","example":true,"weightKg":90.4,"note":"Пример: перебор — сыр, хлеб и орехи вечером.","meals":[{"name":"Завтрак","time":"09:00","items":[{"id":"egg","pieces":4},{"id":"bread_rye","pieces":2},{"id":"butter825","g":15},{"id":"tea_black","pieces":1},{"id":"sugar","g":10}]},{"name":"Обед","time":"14:00","items":[{"id":"beef_lean","g":250},{"id":"potato","g":350},{"id":"tomato","pieces":1},{"id":"oil_sunflower","pieces":1}]},{"name":"Ужин","time":"20:30","items":[{"id":"cheese45","g":100},{"id":"bread_rye","pieces":4},{"id":"yogurt32","g":200}]},{"name":"Перекус","time":"17:00","items":[{"id":"banana","pieces":1},{"id":"walnut","g":30}]}]},{"date":"2026-09-06","example":true,"weightKg":90.5,"note":"Пример: выходной, мало белка при нормальных калориях.","meals":[{"name":"Завтрак","time":"10:00","items":[{"id":"oats","g":60},{"id":"milk25","g":150},{"id":"yogurt32","g":250},{"id":"apple","pieces":1},{"id":"coffee_black","pieces":1}]},{"name":"Обед","time":"15:00","items":[{"id":"rice_dry","g":100},{"id":"salmon","g":180},{"id":"cucumber","pieces":1},{"id":"oil_sunflower","pieces":1}]},{"name":"Ужин","time":"20:00","items":[{"id":"tomato","pieces":2},{"id":"bread_rye","pieces":3},{"id":"cheese45","g":40},{"id":"tea_black","pieces":1}]}]},{"date":"2026-09-07","example":true,"weightKg":90.1,"note":"Пример: день с тренировкой, чуть выше нормы.","meals":[{"name":"Завтрак","time":"08:10","items":[{"id":"egg","pieces":4},{"id":"bread_rye","pieces":2},{"id":"butter825","g":10},{"id":"coffee_black","pieces":1}]},{"name":"Обед","time":"13:20","items":[{"id":"chicken_thigh","g":220},{"id":"buckwheat_boil","g":300},{"id":"tomato","pieces":1},{"id":"oil_sunflower","pieces":1}]},{"name":"Ужин","time":"19:30","items":[{"id":"tvorog5","g":300},{"id":"banana","pieces":1}]},{"name":"Перекус","time":"16:40","items":[{"id":"walnut","g":30}]}]},{"date":"2026-09-08","example":true,"weightKg":89.9,"note":"Пример: почти идеально — калории и БЖУ сошлись.","meals":[{"name":"Завтрак","time":"08:40","items":[{"id":"oats","g":80},{"id":"milk25","g":250},{"id":"egg","pieces":2}]},{"name":"Обед","time":"13:45","items":[{"id":"chicken_breast","g":250},{"id":"rice_dry","g":90},{"id":"cucumber","pieces":1},{"id":"oil_sunflower","pieces":1}]},{"name":"Ужин","time":"19:20","items":[{"id":"salmon","g":180},{"id":"tomato","pieces":1},{"id":"bread_rye","pieces":2}]},{"name":"Перекус","time":"16:30","items":[{"id":"yogurt32","g":150},{"id":"apple","pieces":1}]}]},{"date":"2026-09-09","example":true,"weightKg":89.8,"note":"Пример: недобор больше 15% — такой день тормозит обмен, а не ускоряет похудение.","meals":[{"name":"Завтрак","time":"09:15","items":[{"id":"egg","pieces":4},{"id":"bread_rye","pieces":2},{"id":"butter825","g":10},{"id":"tea_black","pieces":1}]},{"name":"Обед","time":"14:30","items":[{"id":"chicken_breast","g":250},{"id":"buckwheat_boil","g":200},{"id":"cucumber","pieces":1},{"id":"tomato","pieces":1}]},{"name":"Ужин","time":"20:10","items":[{"id":"tvorog5","g":250},{"id":"walnut","g":30}]}]},{"date":"2026-09-10","example":true,"weightKg":89.7,"note":"Завтрак — с твоих слов. Обед и ужин подставлены для примера, замени на реальные.","meals":[{"name":"Завтрак","time":"08:20","items":[{"id":"egg","pieces":4,"note":"4 яйца"},{"id":"cheese45","g":50,"note":"50 г сыра"},{"id":"tea_black","pieces":1,"note":"чай"},{"id":"sugar","g":20,"note":"20 г сахара в чай"}]},{"name":"Обед","time":"13:30","items":[{"id":"chicken_breast","g":250},{"id":"buckwheat_boil","g":300},{"id":"cucumber","pieces":1},{"id":"bread_rye","pieces":2}]},{"name":"Ужин","time":"19:30","items":[{"id":"tvorog5","g":250},{"id":"apple","pieces":1},{"id":"walnut","g":25}]}]}]}</script>
+<script id="app-data" type="application/json">{"profile":{"version":2,"placeholder":false,"toConfirm":["heightCm","age","activity"],"comment":"Вес и цель — твои. Рост, возраст и уровень активности пока прежние: подтверди или поправь, нормы пересчитаются.","name":"Виталий","sex":"male","age":30,"heightCm":180,"weightKg":74,"goalWeightKg":67,"activity":{"factor":1.375,"label":"Лёгкая активность (1–3 тренировки в неделю)"},"activePhase":"loss","phases":[{"id":"loss","label":"Похудение","range":"74 → 67 кг","deficitPct":20,"tdee":2365,"targets":{"kcal":1900,"protein":133,"fat":67,"carbs":191,"fiber":30,"waterMl":2200},"note":"Дефицит 465 ккал в день — это примерно 0.4 кг жира в неделю. Семь килограммов уходят за 16–18 недель.","deficitNote":"Дефицит 15–25% — умеренный: жир уходит ~0.4–0.6 кг/нед, мышцы при достаточном белке остаются."},{"id":"soft","label":"Мягкий дефицит","range":"когда тяжело держать 1 900","deficitPct":10,"tdee":2365,"targets":{"kcal":2150,"protein":133,"fat":67,"carbs":254,"fiber":30,"waterMl":2200},"note":"Запасной этап на тяжёлые недели: вес идёт вниз медленнее (~0.2 кг/нед), зато срывов меньше.","deficitNote":"Дефицит 10% — минимальный рабочий: медленно, но почти без потери сил и мышц."},{"id":"hold","label":"Поддержание","range":"пауза на текущем весе","deficitPct":0,"tdee":2365,"targets":{"kcal":2350,"protein":133,"fat":67,"carbs":304,"fiber":30,"waterMl":2200},"note":"Диетическая пауза на 1–2 недели: обмен и гормоны голода возвращаются к норме, потом снова в дефицит.","deficitNote":"Ноль дефицита — держим вес там, где он есть."},{"id":"goal","label":"Цель 67 кг","range":"после похудения","deficitPct":0,"tdee":2270,"targets":{"kcal":2270,"protein":121,"fat":60,"carbs":312,"fiber":30,"waterMl":2000},"note":"Нормы на целевом весе: столько нужно, чтобы удерживать 67 кг, когда дойдёшь.","deficitNote":"На новом весе расход ниже — 2 270 ккал вместо 2 365."}],"targets":{"kcal":1900,"protein":133,"fat":67,"carbs":191,"fiber":30,"waterMl":2200},"method":{"bmr":{"name":"Миффлина — Сан Жеора","formula":"10 × 74 + 6.25 × 180 − 5 × 30 + 5","value":1720,"note":"Самая точная из популярных формул: попадает в ±10% от измеренного метаболизма чаще остальных."},"tdee":{"formula":"BMR × коэффициент активности","value":2365},"deficit":{"formula":"TDEE − дефицит этапа","value":1892,"rounded":1900,"note":"Дефицит 15–25% — умеренный: жир уходит ~0.4–0.6 кг/нед, мышцы при достаточном белке остаются."},"protein":{"formula":"1.8 г на кг веса тела","value":133,"note":"Для сохранения мышц в дефиците нужно ≥1.2 г/кг; 1.6–2.2 г/кг — рабочий диапазон при похудении."},"fat":{"formula":"0.9 г на кг веса тела","value":67,"note":"Не опускать ниже 0.6–0.8 г/кг: жиры нужны для гормонов и усвоения витаминов A, D, E, K."},"carbs":{"formula":"(Калории − белки×4 − жиры×9) ÷ 4","value":191,"note":"Углеводы — остаток бюджета. Это топливо для тренировок, урезать их первыми при плато."},"activeKcal":{"formula":"Активные калории из часов","note":"Норма уже включает лёгкую активность (коэффициент 1.375). Поэтому активные калории из часов не прибавляются к норме автоматически — они показаны отдельно, а бюджет с ними считается только для тренировочных дней."},"sources":[{"title":"Mifflin-St Jeor equation (точность RMR)","url":"https://reference.medscape.com/calculator/846/mifflin-st-jeor-equation-calculator"},{"title":"The role of protein in weight loss and maintenance, AJCN","url":"https://ajcn.nutrition.org/article/S0002-9165(23)27427-4/fulltext"},{"title":"Higher protein intake preserves lean mass during energy deficit (RCT)","url":"https://ajcn.nutrition.org/article/S0002-9165(22)06559-5/fulltext"},{"title":"Enhanced protein intake & muscle mass in overweight adults (мета-анализ)","url":"https://www.sciencedirect.com/science/article/abs/pii/S2405457724001761"}]}},"foods":[{"id":"egg","name":"Яйцо куриное","cat":"Белковое","per100":{"k":157,"p":12.7,"f":11.5,"c":0.7},"piece":{"label":"шт","g":57}},{"id":"egg_white","name":"Яичный белок","cat":"Белковое","per100":{"k":48,"p":11.1,"f":0.2,"c":0.7},"piece":{"label":"шт","g":33}},{"id":"chicken_breast","name":"Куриная грудка, филе","cat":"Белковое","per100":{"k":113,"p":23.6,"f":1.9,"c":0.4},"piece":null},{"id":"chicken_thigh","name":"Куриное бедро без кожи","cat":"Белковое","per100":{"k":185,"p":17,"f":13,"c":0},"piece":null},{"id":"beef_lean","name":"Говядина постная","cat":"Белковое","per100":{"k":187,"p":18.9,"f":12.4,"c":0},"piece":null},{"id":"salmon","name":"Лосось","cat":"Белковое","per100":{"k":208,"p":20,"f":13,"c":0},"piece":null},{"id":"tvorog5","name":"Творог 5%","cat":"Молочное","per100":{"k":121,"p":17.2,"f":5,"c":1.8},"piece":null},{"id":"yogurt32","name":"Йогурт натуральный 3.2%","cat":"Молочное","per100":{"k":66,"p":5,"f":3.2,"c":3.5},"piece":null},{"id":"milk25","name":"Молоко 2.5%","cat":"Молочное","per100":{"k":52,"p":2.9,"f":2.5,"c":4.7},"piece":null},{"id":"cheese45","name":"Сыр полутвёрдый 45%","cat":"Молочное","per100":{"k":356,"p":24.9,"f":27.4,"c":1.3},"piece":null},{"id":"oats","name":"Овсяные хлопья, сухие","cat":"Крупы","per100":{"k":366,"p":12.3,"f":6.1,"c":59.5},"piece":null},{"id":"buckwheat_dry","name":"Гречка, сухая","cat":"Крупы","per100":{"k":343,"p":12.6,"f":3.3,"c":62},"piece":null},{"id":"buckwheat_boil","name":"Гречка, варёная","cat":"Крупы","per100":{"k":110,"p":4.2,"f":1.1,"c":21.3},"piece":null},{"id":"rice_dry","name":"Рис белый, сухой","cat":"Крупы","per100":{"k":344,"p":6.7,"f":0.7,"c":78.9},"piece":null},{"id":"bread_rye","name":"Хлеб ржаной","cat":"Хлеб","per100":{"k":208,"p":6.8,"f":1.3,"c":39.8},"piece":{"label":"ломтик","g":30}},{"id":"potato","name":"Картофель","cat":"Овощи","per100":{"k":77,"p":2,"f":0.4,"c":16.3},"piece":null},{"id":"tomato","name":"Помидор","cat":"Овощи","per100":{"k":18,"p":0.9,"f":0.2,"c":3.9},"piece":{"label":"шт","g":120}},{"id":"cucumber","name":"Огурец","cat":"Овощи","per100":{"k":15,"p":0.7,"f":0.1,"c":3.6},"piece":{"label":"шт","g":100}},{"id":"banana","name":"Банан","cat":"Фрукты","per100":{"k":89,"p":1.1,"f":0.3,"c":21.8},"piece":{"label":"шт","g":120}},{"id":"apple","name":"Яблоко","cat":"Фрукты","per100":{"k":52,"p":0.3,"f":0.2,"c":11.4},"piece":{"label":"шт","g":180}},{"id":"walnut","name":"Грецкий орех","cat":"Орехи","per100":{"k":654,"p":15.2,"f":65.2,"c":13.7},"piece":null},{"id":"oil_sunflower","name":"Масло подсолнечное","cat":"Жиры","per100":{"k":899,"p":0,"f":99.9,"c":0},"piece":{"label":"ст. л.","g":17}},{"id":"butter825","name":"Масло сливочное 82.5%","cat":"Жиры","per100":{"k":748,"p":0.5,"f":82.5,"c":0.8},"piece":null},{"id":"sugar","name":"Сахар","cat":"Прочее","per100":{"k":399,"p":0,"f":0,"c":99.8},"piece":{"label":"ч. л.","g":5}},{"id":"tea_black","name":"Чай чёрный без сахара","cat":"Напитки","per100":{"k":0,"p":0,"f":0,"c":0},"piece":{"label":"чашка","g":250}},{"id":"coffee_black","name":"Кофе чёрный без сахара","cat":"Напитки","per100":{"k":2,"p":0.2,"f":0,"c":0},"piece":{"label":"чашка","g":200}}],"days":[]}</script>
 <script>
 (function(){
   "use strict";
   var DATA = JSON.parse(document.getElementById("app-data").textContent);
-  var P = DATA.profile, T = P.targets;
+  var P = DATA.profile;
+  var PHASES = P.phases && P.phases.length ? P.phases : [
+    { id:"base", label:"Норма", range:"", deficitPct:P.deficitPct || 0,
+      tdee:(P.method && P.method.tdee ? P.method.tdee.value : 0), targets:P.targets, note:"" }
+  ];
+  var phaseId = P.activePhase || PHASES[0].id;
+  function PH(){ return PHASES.filter(function(x){ return x.id === phaseId; })[0] || PHASES[0]; }
+  var T = PH().targets;
+
+  var MEAL_ORDER = [
+    { name:"Завтрак",  accent:"var(--f)" },
+    { name:"Обед",     accent:"var(--p)" },
+    { name:"Ужин",     accent:"var(--c)" },
+    { name:"Перекусы", accent:"var(--warn)" }
+  ];
+  function mealSlot(name){
+    var n = (name || "").toLowerCase();
+    if(n.indexOf("завтрак") === 0) return "Завтрак";
+    if(n.indexOf("обед") === 0) return "Обед";
+    if(n.indexOf("ужин") === 0) return "Ужин";
+    if(n.indexOf("перекус") === 0 || n.indexOf("снек") === 0) return "Перекусы";
+    return null;
+  }
   var FOODS = {}; DATA.foods.forEach(function(f){ FOODS[f.id] = f; });
   var DAYS = DATA.days.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
 
@@ -431,7 +551,8 @@ footer p{margin:0 0 7px}
   }
 
   // --- рендер дня ---
-  var current = DAYS[DAYS.length-1].date;
+  var EMPTY = DAYS.length === 0;
+  var current = EMPTY ? null : DAYS[DAYS.length-1].date;
 
   function renderDial(t){
     var st = statusOf(t.k), pct = t.k / T.kcal, left = T.kcal - t.k;
@@ -442,9 +563,12 @@ footer p{margin:0 0 7px}
     pill.className = "pill " + st.cls;
     pill.querySelector(".sq").style.background = st.color;
     pill.querySelector("span:last-child").textContent = st.label;
+    var day = DAYS.filter(function(x){ return x.date === current; })[0];
+    var act = day && day.activeKcal != null ? day.activeKcal : null;
     document.getElementById("day-kv").innerHTML =
       '<dt>' + (left >= 0 ? "Осталось на сегодня" : "Съедено сверх нормы") + '</dt><dd>' + nf(Math.abs(left)) + ' ккал</dd>' +
       '<dt>Норма на день</dt><dd>' + nf(T.kcal) + ' ккал</dd>' +
+      '<dt>Активные калории</dt><dd>' + (act != null ? nf(act) + ' ккал' : '—') + '</dd>' +
       '<dt>Выполнено</dt><dd>' + r0(pct*100) + ' %</dd>';
   }
 
@@ -467,28 +591,71 @@ footer p{margin:0 0 7px}
   }
 
   function renderMeals(day){
-    var html = '<thead><tr><th scope="col">Продукт</th><th scope="col">Вес</th><th scope="col">Ккал</th>' +
-      '<th scope="col">Б</th><th scope="col">Ж</th><th scope="col">У</th></tr></thead><tbody>';
+    var byslot = {};
+    var extra = [];
     day.meals.forEach(function(meal){
-      var rows = meal.items.map(resolve), s = sum(rows);
-      html += '<tr class="meal-h"><td colspan="6">' + meal.name +
-        (meal.time ? '<span class="time">' + meal.time + '</span>' : '') + '</td></tr>';
-      rows.forEach(function(x){
-        html += '<tr class="item"><td>' + x.name +
-          (x.note ? '<span class="itemnote">' + x.note + '</span>' : '') + '</td>' +
-          '<td class="g">' + (x.qty ? x.qty + ' · ' : '') + r0(x.g) + ' г</td>' +
-          '<td class="n">' + nf(x.k) + '</td><td class="n">' + r1(x.p) + '</td>' +
-          '<td class="n">' + r1(x.f) + '</td><td class="n">' + r1(x.c) + '</td></tr>';
-      });
-      html += '<tr class="sub"><td class="lbl">Итого ' + meal.name.toLowerCase() + '</td><td></td>' +
-        '<td>' + nf(s.k) + '</td><td>' + r0(s.p) + '</td><td>' + r0(s.f) + '</td><td>' + r0(s.c) + '</td></tr>';
+      var slot = mealSlot(meal.name);
+      if(slot){ (byslot[slot] = byslot[slot] || []).push(meal); }
+      else extra.push(meal);
     });
+
     var t = TOTALS[day.date];
-    html += '</tbody><tfoot><tr><td>За день</td><td></td><td>' + nf(t.k) + '</td>' +
-      '<td>' + r0(t.p) + '</td><td>' + r0(t.f) + '</td><td>' + r0(t.c) + '</td></tr>' +
-      '<tr class="sub"><td class="lbl">Норма</td><td></td><td>' + nf(T.kcal) + '</td>' +
-      '<td>' + T.protein + '</td><td>' + T.fat + '</td><td>' + T.carbs + '</td></tr></tfoot>';
-    document.getElementById("mealtable").innerHTML = html;
+    var cards = MEAL_ORDER.map(function(def){
+      return card(def.name, def.accent, byslot[def.name] || [], t.k);
+    }).concat(extra.map(function(m){ return card(m.name, "var(--ink-2)", [m], t.k); }));
+
+    document.getElementById("meals").innerHTML = cards.join("");
+
+    function card(name, accent, meals, dayK){
+      var items = [];
+      meals.forEach(function(m){ m.items.forEach(function(i){ items.push(resolve(i)); }); });
+      var time = meals.map(function(m){ return m.time; }).filter(Boolean).join(" · ");
+      var head =
+        '<div class="mc-head"><span class="mc-name">' + name + '</span>' +
+        (time ? '<span class="mc-time">' + time + '</span>' : '') + '</div>';
+
+      if(!items.length){
+        return '<article class="mealcard empty" style="--accent:' + accent + '">' + head +
+          '<div class="mc-empty">Пока пусто — скажи, что съел, и я допишу.</div></article>';
+      }
+
+      var sm = sum(items);
+      var share = dayK > 0 ? sm.k / dayK : 0;
+      return '<article class="mealcard" style="--accent:' + accent + '">' + head +
+        '<div class="mc-sum"><span class="mc-k">' + nf(sm.k) + '<small>ккал</small></span>' +
+        '<span class="mc-macro">Б ' + r0(sm.p) + ' · Ж ' + r0(sm.f) + ' · У ' + r0(sm.c) + '</span></div>' +
+        '<div class="mc-bar"><i style="width:' + r0(share*100) + '%"></i></div>' +
+        '<ul>' + items.map(function(x){
+          return '<li><span class="nm">' + x.name + (x.note ? '<i>' + x.note + '</i>' : '') + '</span>' +
+            '<span class="g">' + (x.qty ? x.qty + ' · ' : '') + r0(x.g) + ' г</span>' +
+            '<span class="k">' + nf(x.k) + '</span></li>';
+        }).join("") + '</ul></article>';
+    }
+  }
+
+  function renderActive(day){
+    var act = day.activeKcal != null ? day.activeKcal : null;
+    var box = document.getElementById("activecard");
+    var head = '<div class="ac-head"><span class="ac-name">Активные калории</span>' +
+      '<span class="eyebrow">' + (day.activeSource || "из часов") + '</span></div>';
+
+    if(act == null){
+      box.innerHTML = head +
+        '<div class="ac-row"><span class="ac-k">—</span>' +
+        '<span class="ac-budget">Данных за этот день нет. Пришли вечером цифру из часов — допишу.</span></div>' +
+        '<p class="ac-note">Норма ' + nf(T.kcal) + ' ккал уже включает лёгкую бытовую активность, ' +
+        'поэтому активные калории показаны отдельно и к норме сами не прибавляются.</p>';
+      return;
+    }
+
+    box.innerHTML = head +
+      '<div class="ac-row"><span class="ac-k">' + nf(act) + '<small>ккал</small></span>' +
+      '<span class="ac-budget">Бюджет с активностью: <b>' + nf(T.kcal) + '</b> + <b>' + nf(act) +
+      '</b> = <b>' + nf(T.kcal + act) + '</b> ккал' +
+      (day.activeNote ? '<br>' + day.activeNote : '') + '</span></div>' +
+      '<p class="ac-note">Норма ' + nf(T.kcal) + ' ккал уже включает лёгкую бытовую активность (коэффициент ' +
+      P.activity.factor + '). Полностью прибавлять активные калории стоит только в дни настоящей тренировки — ' +
+      'в обычный день считай по норме.</p>';
   }
 
   function renderNote(day){
@@ -508,23 +675,28 @@ footer p{margin:0 0 7px}
   }
 
   // --- график недели ---
-  var W = 720, H = 240, PL = 52, PR = 14, PT = 18, PB = 34;
   function renderChart(){
+    var narrow = window.innerWidth < 620;
+    var W = narrow ? 392 : 720, H = narrow ? 252 : 240;
+    var PL = narrow ? 42 : 52, PR = narrow ? 6 : 14, PT = narrow ? 26 : 18, PB = 34;
+    var FS = narrow ? 11 : 10.5;
+    var LIST = DAYS.slice(narrow ? -7 : -14);
     var svg = document.getElementById("weekchart");
-    var max = Math.max(T.kcal * 1.25, Math.max.apply(null, DAYS.map(function(x){ return TOTALS[x.date].k; })) * 1.12);
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    var max = Math.max(T.kcal * 1.25, Math.max.apply(null, LIST.map(function(x){ return TOTALS[x.date].k; })) * 1.12);
     var iw = W - PL - PR, ih = H - PT - PB;
-    var step = iw / DAYS.length, bw = Math.min(46, step * 0.56);
+    var step = iw / LIST.length, bw = Math.min(46, step * 0.56);
     var y = function(v){ return PT + ih - (v/max)*ih; };
     var s = '<title id="wc-title">Калории по дням в сравнении с дневной нормой</title>';
 
     [0, T.kcal/2, T.kcal, max].forEach(function(v){
       s += '<line x1="' + PL + '" x2="' + (W-PR) + '" y1="' + y(v).toFixed(1) + '" y2="' + y(v).toFixed(1) +
         '" stroke="var(--hair)" stroke-width="1"></line>' +
-        '<text x="' + (PL-10) + '" y="' + (y(v)+4).toFixed(1) + '" text-anchor="end" fill="var(--ink-3)" ' +
-        'font-family="JetBrains Mono, monospace" font-size="10.5">' + nf(v) + '</text>';
+        '<text x="' + (PL-8) + '" y="' + (y(v)+4).toFixed(1) + '" text-anchor="end" fill="var(--ink-3)" ' +
+        'font-family="JetBrains Mono, monospace" font-size="' + FS + '">' + nf(v) + '</text>';
     });
 
-    DAYS.forEach(function(day, i){
+    LIST.forEach(function(day, i){
       var t = TOTALS[day.date], cx = PL + step*i + step/2, x = cx - bw/2;
       var capped = Math.min(t.k, T.kcal), over = Math.max(0, t.k - T.kcal);
       var base = t.k < T.kcal*0.85 ? "var(--ink-3)" : "var(--ink)";
@@ -540,7 +712,7 @@ footer p{margin:0 0 7px}
           '<rect x="' + x + '" y="' + (y(0)-6) + '" width="' + bw + '" height="6" fill="' + base + '"></rect>';
       }
       s += '<text x="' + cx + '" y="' + (H-PB+17) + '" text-anchor="middle" fill="' + (day.date===current ? "var(--ink)" : "var(--ink-3)") +
-        '" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="' + (day.date===current ? 500 : 400) + '">' +
+        '" font-family="JetBrains Mono, monospace" font-size="' + FS + '" font-weight="' + (day.date===current ? 500 : 400) + '">' +
         dow(day.date) + " " + d(day.date).getDate() + '</text>';
       if(day.date === current){
         s += '<line x1="' + x + '" x2="' + (x+bw) + '" y1="' + (H-PB+24) + '" y2="' + (H-PB+24) + '" stroke="var(--ink)" stroke-width="2"></line>';
@@ -566,8 +738,8 @@ footer p{margin:0 0 7px}
         '<td>' + fmtLong(x.date) + '<span class="dow">' + dow(x.date) + '</span></td>' +
         '<td>' + nf(t.k) + '</td>' +
         '<td class="delta ' + (dlt>0 ? "over" : "under") + '">' + (dlt>0 ? "+" : "−") + nf(Math.abs(dlt)) + '</td>' +
-        '<td>' + r0(t.p) + ' г</td><td>' + r0(t.f) + ' г</td><td>' + r0(t.c) + ' г</td>' +
-        '<td>' + (x.weightKg ? r1(x.weightKg) + " кг" : "—") + '</td></tr>';
+        '<td>' + r0(t.p) + '</td><td>' + r0(t.f) + '</td><td>' + r0(t.c) + '</td>' +
+        '<td' + (x.weightKg ? '' : ' class="na"') + '>' + (x.weightKg ? r1(x.weightKg) : "—") + '</td></tr>';
     }).join("");
   }
 
@@ -576,11 +748,15 @@ footer p{margin:0 0 7px}
     var M = P.method;
     var cells = [
       { e:"Шаг 1 · Базовый обмен", v:nf(M.bmr.value), u:"ккал", f:M.bmr.formula, n:M.bmr.note },
-      { e:"Шаг 2 · Расход за сутки", v:nf(M.tdee.value), u:"ккал", f:M.tdee.formula + " (×" + P.activity.factor + ")", n:P.activity.label },
-      { e:"Шаг 3 · Дефицит", v:nf(T.kcal), u:"ккал", f:M.deficit.formula + " = " + nf(M.deficit.value) + " → округлено", n:M.deficit.note },
+      { e:"Шаг 2 · Расход за сутки", v:nf(PH().tdee || M.tdee.value), u:"ккал", f:M.tdee.formula + " (×" + P.activity.factor + ")", n:P.activity.label },
+      { e:"Шаг 3 · Этап «" + PH().label + "»", v:nf(T.kcal), u:"ккал",
+        f:PH().deficitPct ? "TDEE − " + PH().deficitPct + "% → округлено" : "Без дефицита → округлено",
+        n:PH().deficitNote || M.deficit.note },
       { e:"Белки", v:T.protein, u:"г", f:M.protein.formula, n:M.protein.note },
       { e:"Жиры", v:T.fat, u:"г", f:M.fat.formula, n:M.fat.note },
-      { e:"Углеводы", v:T.carbs, u:"г", f:M.carbs.formula, n:M.carbs.note }
+      { e:"Углеводы", v:T.carbs, u:"г", f:M.carbs.formula, n:M.carbs.note },
+      { e:"Активные калории", v:"+", u:"", f:M.activeKcal ? M.activeKcal.formula : "Из часов",
+        n:M.activeKcal ? M.activeKcal.note : "Показаны отдельно от нормы." }
     ];
     document.getElementById("method").innerHTML = cells.map(function(c){
       return '<div class="mcell"><span class="eyebrow">' + c.e + '</span>' +
@@ -609,17 +785,67 @@ footer p{margin:0 0 7px}
     document.getElementById("catcount").textContent = list.length + " из " + DATA.foods.length + " продуктов";
   }
 
+  // --- этапы ---
+  function renderPhases(){
+    document.getElementById("phases").innerHTML = PHASES.map(function(ph){
+      return '<button class="phase" type="button" data-phase="' + ph.id + '" aria-pressed="' + (ph.id === phaseId) + '">' +
+        '<span class="pl">' + ph.label + '</span>' +
+        '<span class="pk">' + nf(ph.targets.kcal) + ' ккал' + (ph.deficitPct ? ' · −' + ph.deficitPct + '%' : '') + '</span>' +
+        (ph.range ? '<span class="pr">' + ph.range + '</span>' : '') + '</button>';
+    }).join("");
+    document.getElementById("phase-note").textContent = PH().note || "";
+  }
+
+  function renderHeader(){
+    var ph = PH();
+    document.getElementById("week-target").textContent = nf(T.kcal);
+    document.getElementById("hdr-eyebrow").textContent =
+      "Этап: " + ph.label.toLowerCase() + " · " + P.weightKg + " → " + P.goalWeightKg + " кг" +
+      (ph.deficitPct ? " · дефицит " + ph.deficitPct + "%" : "");
+    document.getElementById("hdr-sub").innerHTML =
+      "Норма <b>" + nf(T.kcal) + " ккал</b> в день: белки " + T.protein + " г, жиры " + T.fat +
+      " г, углеводы " + T.carbs + " г. Расчёт по формуле Миффлина — Сан Жеора" +
+      (ph.deficitPct ? " с дефицитом " + ph.deficitPct + "%." : " — расход без дефицита.");
+  }
+
   // --- общий рендер ---
   function render(){
+    renderPhases(); renderHeader(); renderMethod();
+    if(EMPTY){
+      var zero = { k:0, p:0, f:0, c:0 }, pill = document.getElementById("status-pill");
+      renderDial(zero); renderMacros(zero);
+      pill.className = "pill";
+      pill.querySelector(".sq").style.background = "var(--ink-3)";
+      pill.querySelector("span:last-child").textContent = "День ещё не заполнен";
+      document.getElementById("day-label").textContent = "нет записей";
+      document.getElementById("meals-date").textContent = "нет записей";
+      document.getElementById("meals").hidden = true;
+      document.getElementById("activecard").hidden = true;
+      document.getElementById("empty").hidden = false;
+      document.getElementById("empty").querySelector(".q").innerHTML =
+        "Норма на этом этапе: <b>" + nf(T.kcal) + " ккал</b> · белки <b>" + T.protein +
+        " г</b> · жиры <b>" + T.fat + " г</b> · углеводы <b>" + T.carbs + " г</b>";
+      document.getElementById("daystrip").hidden = true;
+      document.getElementById("sect-week").hidden = true;
+      document.getElementById("sect-diary").hidden = true;
+      document.getElementById("day-note-slot").innerHTML = "";
+      return;
+    }
     var day = DAYS.filter(function(x){ return x.date === current; })[0];
     var t = TOTALS[current];
-    renderDial(t); renderMacros(t); renderMeals(day); renderNote(day);
+    renderDial(t); renderMacros(t); renderMeals(day); renderActive(day); renderNote(day);
     renderStrip(); renderChart(); renderDiary();
+    var strip = document.getElementById("daystrip");
+    strip.scrollLeft = strip.scrollWidth;
     document.getElementById("day-label").textContent = fmtLong(current) + " · " + dow(current);
     document.getElementById("meals-date").textContent = fmtLong(current);
   }
 
   // --- события ---
+  document.getElementById("phases").addEventListener("click", function(e){
+    var b = e.target.closest("[data-phase]");
+    if(b){ phaseId = b.dataset.phase; T = PH().targets; render(); }
+  });
   document.getElementById("daystrip").addEventListener("click", function(e){
     var b = e.target.closest("[data-date]"); if(b){ current = b.dataset.date; render(); }
   });
@@ -647,29 +873,24 @@ footer p{margin:0 0 7px}
   document.getElementById("weekchart").addEventListener("click", function(e){
     var h = e.target.closest(".hit"); if(h){ current = h.dataset.date; render(); }
   });
+  var rt;
+  window.addEventListener("resize", function(){
+    clearTimeout(rt);
+    rt = setTimeout(function(){ if(!EMPTY) renderChart(); }, 150);
+  });
   document.getElementById("catsearch").addEventListener("input", function(e){
     renderCatalog(e.target.value.trim().toLowerCase());
   });
 
-  // --- шапка ---
-  document.getElementById("week-target").textContent = nf(T.kcal);
-  document.getElementById("hdr-eyebrow").textContent =
-    "Цель: " + P.weightKg + " → " + P.goalWeightKg + " кг · дефицит " + P.deficitPct + "%";
-  document.getElementById("hdr-sub").innerHTML =
-    "Норма <b>" + nf(T.kcal) + " ккал</b> в день: белки " + T.protein + " г, жиры " + T.fat +
-    " г, углеводы " + T.carbs + " г. Расчёт по формуле Миффлина — Сан Жеора с дефицитом " + P.deficitPct + "%.";
-
   render();
-  renderMethod();
   renderCatalog("");
 
-  if(P.placeholder){
+  if(P.toConfirm && P.toConfirm.length){
     var b = document.createElement("div");
     b.className = "banner";
-    b.innerHTML = '<span aria-hidden="true">⚑</span><div><b>Это набросок на черновых данных.</b> ' +
-      'Параметры (' + P.age + ' лет, ' + P.heightCm + ' см, ' + P.weightKg + ' кг) и приёмы пищи, кроме завтрака 10 сентября, ' +
-      'подставлены для примера. Скажи свои рост, вес, возраст и уровень активности — нормы пересчитаются, ' +
-      'и дневник начнёт заполняться реальными днями.</div>';
+    b.innerHTML = '<span aria-hidden="true">⚑</span><div><b>Вес ' + P.weightKg + ' кг и цель ' + P.goalWeightKg +
+      ' кг — твои.</b> Рост ' + P.heightCm + ' см, возраст ' + P.age + ' и уровень активности «' +
+      P.activity.label.toLowerCase() + '» пока прежние — подтверди или поправь, и нормы пересчитаются.</div>';
     document.querySelector(".masthead").insertAdjacentElement("afterend", b);
   }
 })();
