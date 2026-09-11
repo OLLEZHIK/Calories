@@ -560,6 +560,10 @@ footer p{margin:0 0 7px}
 
   // --- расчёт ---
   function resolve(item){
+    if(item.k != null && item.name){          // строка пришла из Google-таблицы со своими цифрами
+      return { name:item.name, g:item.g || 0, note:item.note, qty:null,
+               k:+item.k, p:+item.p || 0, f:+item.f || 0, c:+item.c || 0 };
+    }
     var f = FOODS[item.id];
     if(!f) return { name: item.id + " — нет в базе", g: 0, k:0, p:0, f:0, c:0, missing:true, note:item.note };
     var g = item.pieces != null && f.piece ? item.pieces * f.piece.g : (item.g || 0);
@@ -833,7 +837,7 @@ footer p{margin:0 0 7px}
       return !q || f.name.toLowerCase().indexOf(q) >= 0 || f.cat.toLowerCase().indexOf(q) >= 0;
     });
     document.querySelector("#cattable tbody").innerHTML = list.map(function(f){
-      return '<tr><td>' + f.name + ' <span class="tag">' + f.cat + '</span></td>' +
+      return '<tr><td>' + f.name + ' <span class="tag">' + (f.src === "sheet" ? "из таблицы" : f.cat) + '</span></td>' +
         '<td>' + f.per100.k + '</td><td>' + f.per100.p + '</td><td>' + f.per100.f + '</td><td>' + f.per100.c + '</td>' +
         '<td class="pc">' + (f.piece ? "1 " + f.piece.label + " = " + f.piece.g + " г" : "—") + '</td></tr>';
     }).join("") || '<tr><td colspan="6" style="color:var(--ink-3);padding:16px 18px">Ничего не нашлось. Скажи мне — добавлю продукт в базу.</td></tr>';

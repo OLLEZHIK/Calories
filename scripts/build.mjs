@@ -18,7 +18,8 @@ const known = new Set(foods.map((f) => f.id));
 const missing = new Set();
 for (const day of days)
   for (const meal of day.meals)
-    for (const item of meal.items) if (!known.has(item.id)) missing.add(`${day.date}: ${item.id}`);
+    for (const item of meal.items)
+      if (item.id && !known.has(item.id)) missing.add(`${day.date}: ${item.id}`);
 if (missing.size) {
   console.error("Продукты отсутствуют в data/foods.json:\n  " + [...missing].join("\n  "));
   process.exit(1);
